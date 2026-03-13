@@ -1,0 +1,32 @@
+# Debe incluir lo siguiente:
+
+# checkout
+# setup-java
+# build
+# test
+
+name: CI
+
+on:
+  # Acciona el flujo cuando hay un push o pull request en la rama main
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    # Ejecuta el flujo en un entorno de Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        # Configura la versión de Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: "maven"
+      - name: Build with Maven
+        # Compila el proyecto
+        run: mvn clean verify
