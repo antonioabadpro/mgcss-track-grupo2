@@ -33,5 +33,6 @@ jobs:
       # Analysis with SonarCloud with Maven
       - name: Build and analyze with SonarCloud
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.region=us -Dsonar.organization=antonioabadpro -Dsonar.projectKey=antonioabadpro_mgcss-track-grupo2
