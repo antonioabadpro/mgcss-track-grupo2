@@ -30,3 +30,8 @@ jobs:
       - name: Build with Maven
         # Compila el proyecto
         run: mvn clean verify
+      # Analysis with SonarCloud with Maven
+      - name: Build and analyze with SonarCloud
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_CLOUD_QUBE }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.region=us -Dsonar.organization=antonioabadpro -Dsonar.projectKey=antonioabadpro_mgcss-track-grupo2
