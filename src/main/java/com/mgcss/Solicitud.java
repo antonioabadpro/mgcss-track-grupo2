@@ -1,10 +1,12 @@
 package com.mgcss;
 
+import com.mgcss.domain.EstadoSolicitud;
+
 public class Solicitud {
 
     private Long id;
 
-    private int estado;
+    private EstadoSolicitud estado;
     private String fechaCreacion;
 
     public Solicitud() {
@@ -14,11 +16,11 @@ public class Solicitud {
         return id;
     }
 
-    public int getEstado() {
+    public EstadoSolicitud getEstado() {
         return estado;
     }
 
-    public void setEstado(int estado) {
+    public void setEstado(EstadoSolicitud estado) {
         this.estado = estado;
     }
 
@@ -28,6 +30,12 @@ public class Solicitud {
 
     public void setFechaCreacion(String fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public void cerrar() {
+        if (this.estado != EstadoSolicitud.EN_PROCESO) {
+            this.estado = EstadoSolicitud.CERRADA;
+        }
     }
 
 }
