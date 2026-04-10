@@ -1,4 +1,5 @@
-@Service
+package com.mgcss.service;
+
 public class SolicitudService {
 	
 	private final SolicitudRepository solicitudRepository;
