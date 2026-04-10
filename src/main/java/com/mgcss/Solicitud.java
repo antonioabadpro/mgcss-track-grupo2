@@ -6,6 +6,7 @@ public class Solicitud {
 
     private int estado;
     private String fechaCreacion;
+    private Tecnico tecnico;
 
     public Solicitud() {
     }
@@ -28,6 +29,15 @@ public class Solicitud {
 
     public void setFechaCreacion(String fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public boolean setTecnico(Tecnico tecnico){
+        if(tecnico.getEstado == true){
+            this.tecnico = tecnico;
+            return true;
+        }
+        else
+            return false;
     }
 
 }
