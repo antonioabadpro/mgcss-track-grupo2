@@ -1,4 +1,6 @@
 package com.mgcss.domain;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Solicitud {
 
@@ -9,18 +11,22 @@ public class Solicitud {
     private Tecnico tecnico;
 
     public Solicitud() {
+        this.estado = EstadoSolicitud.ABIERTA;
+        // Establece la fecha de creación al momento de instanciar la solicitud con el formato (DD/MM/YYYY)
+        this.fechaCreacion = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        this.tecnico = null;
     }
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public EstadoSolicitud getEstado() {
-        return estado;
+        return this.estado;
     }
 
     public Tecnico getTecnico() {
-        return tecnico;
+        return this.tecnico;
     }
 
     public void setEstado(EstadoSolicitud estado) {
@@ -28,11 +34,16 @@ public class Solicitud {
     }
 
     public String getFechaCreacion() {
-        return fechaCreacion;
+        return this.fechaCreacion;
     }
 
-    public void setFechaCreacion(String fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
+    public boolean setFechaCreacion(String fechaCreacion) {
+        // Si la fecha tiene el formato (DD/MM/YYYY) se establece la fecha
+        if (fechaCreacion.matches("\\d{2}/\\d{2}/\\d{4}")) {
+            this.fechaCreacion = fechaCreacion;
+            return true;
+        }
+        return false;
     }
 
     public boolean setTecnico(Tecnico tecnico){
@@ -41,14 +52,23 @@ public class Solicitud {
             this.tecnico = tecnico;
             return true;
         }
-        else
-            return false;
+        return false;
     }
 
-    public void cerrar() {
-        if (this.estado != EstadoSolicitud.EN_PROCESO) {
-            this.estado = EstadoSolicitud.CERRADA;
+    public boolean procesarSolicitud() {
+        if (this.estado == EstadoSolicitud.ABIERTA) {
+            this.estado = EstadoSolicitud.EN_PROCESO;
+            return true;
         }
+        return false;
+    }
+
+    public boolean cerrarSolicitud() {
+        if (this.estado == EstadoSolicitud.EN_PROCESO) {
+            this.estado = EstadoSolicitud.CERRADA;
+            return true;
+        }
+        return false;
     }
 
 }
