@@ -1,6 +1,4 @@
-package com.mgcss;
-
-import com.mgcss.domain.EstadoSolicitud;
+package com.mgcss.domain;
 
 public class Solicitud {
 
@@ -21,6 +19,10 @@ public class Solicitud {
         return estado;
     }
 
+    public Tecnico getTecnico() {
+        return tecnico;
+    }
+
     public void setEstado(EstadoSolicitud estado) {
         this.estado = estado;
     }
@@ -34,7 +36,8 @@ public class Solicitud {
     }
 
     public boolean setTecnico(Tecnico tecnico){
-        if(tecnico.getEstado == true){
+
+        if(tecnico.isTecnicoActivo() == true){
             this.tecnico = tecnico;
             return true;
         }

@@ -1,5 +1,7 @@
 package com.mgcss.domain;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -7,17 +9,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class TecnicoTests {
     @Test
     void testSoloTecnicoActivoASolicitud() {
-        Tecnico tecnico = new tecnicoActivo();
+        Tecnico tecnico = new Tecnico(true);
         Solicitud solicitud = new Solicitud();
         solicitud.setTecnico(tecnico);
-        assert(solicitud.getTecnico().getEstado() && "El tecnico es activo");
+
+        assertTrue(solicitud.getTecnico().isTecnicoActivo() == true, "El tecnico es activo");
     }
     @Test
     void testSoloTecnicoInactivoASolicitud() {
-        Tecnico tecnico = new tecnicoInactivo();
+        Tecnico tecnico = new Tecnico(false);
         Solicitud solicitud = new Solicitud();
         solicitud.setTecnico(tecnico);
-        assertFalse(solicitud.getTecnico().getEstado() && "El tecnico es inactivo");
+
+        assertTrue(solicitud.getTecnico().isTecnicoActivo() == false, "El tecnico es inactivo");
     }
 }
 

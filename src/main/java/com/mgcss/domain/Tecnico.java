@@ -1,20 +1,22 @@
+package com.mgcss.domain;
+
 public class Tecnico {
-    boolean activo;
+    boolean tecnicoActivo;
 
-    public Tecnico tecnicoActivo(){
-        activo = true;
+    public Tecnico(boolean estado) {
+        this.tecnicoActivo = estado;
     }
 
-    public Tecnico tecnicoInactivo(){
-        activo = false;
+    public void setTecnicoActivo(){
+        this.tecnicoActivo = true;
     }
 
-    public void setEstado(boolean estado){
-        this.estado = estado;
+    public void setTecnicoInactivo(){
+        this.tecnicoActivo = false;
     }
 
-    public boolean getEstado(){
-        return estado;
+    public boolean isTecnicoActivo(){
+        return this.tecnicoActivo;
     }
     
 }
