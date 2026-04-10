@@ -1,0 +1,24 @@
+package com.mgcss.service;
+
+public class SolicitudService {
+	
+	private final SolicitudRepository solicitudRepository;
+	
+	public SolicitudService(SolicitudRepository solicitudRepository) {
+		this.solicitudRepository = solicitudRepository;
+	}
+	
+	public Solicitud crearSolicitud(Solicitud solicitud) {
+		return solicitudRepository.save(solicitud);
+	}
+	
+	public void asignarTecnico(Solicitud solicitud, Tecnico tecnico) {
+		solicitud.setTecnico(tecnico);
+		solicitudRepository.save(solicitud);
+	}
+	
+	public void cambiarEstado(Solicitud solicitud, EstadoSolicitud estado) {
+		solicitud.setEstado(estado);
+		solicitudRepository.save(solicitud);
+	}
+}
