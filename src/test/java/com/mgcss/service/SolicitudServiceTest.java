@@ -3,11 +3,14 @@ package com.mgcss.service;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import java.util.Optional;
 
 import com.mgcss.domain.Solicitud;
@@ -15,7 +18,9 @@ import com.mgcss.domain.Tecnico;
 import com.mgcss.domain.EstadoSolicitud;
 import com.mgcss.infraestructure.repository.SolicitudRepository;
 
+@Tag("service")
 @ExtendWith(MockitoExtension.class)
+@SpringBootTest
 public class SolicitudServiceTest {
 
     @Mock
