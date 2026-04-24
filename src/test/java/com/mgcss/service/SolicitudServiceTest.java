@@ -29,6 +29,9 @@ public class SolicitudServiceTest {
     @InjectMocks
     private SolicitudService solicitudService;
 
+    /**
+     * Este test verifica que un técnico pueda ser asignado a una solicitud correctamente.
+     */
     @Test
     public void testAsignarTecnico_Valido() {
         // 1. Crear mock de SolicitudRepository (ya hecho con @Mock)
@@ -55,6 +58,9 @@ public class SolicitudServiceTest {
         assertEquals(tecnico, solicitud.getTecnico());
     }
 
+    /**
+     * Este test verifica que no se pueda asignar un técnico a una solicitud que no existe.
+     */
     @Test
     public void testAsignarTecnico_SolicitudNoExiste_LanzaExcepcion() {
         Long solicitudId = 99L;
