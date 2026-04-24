@@ -76,4 +76,32 @@ public class SolicitudServiceTest {
 
         verify(solicitudRepository, never()).save(any(Solicitud.class));
     }
+
+    /**
+     * Este test verifica que crearSolicitud guarda y retorna la solicitud.
+     */
+    @Test
+    public void testCrearSolicitud() {
+        Solicitud solicitud = new Solicitud();
+        when(solicitudRepository.save(solicitud)).thenReturn(solicitud);
+
+        Solicitud resultado = solicitudService.crearSolicitud(solicitud);
+
+        assertEquals(solicitud, resultado, "La solicitud retornada debe ser la misma que se guardó");
+        verify(solicitudRepository).save(solicitud);
+    }
+
+    /**
+     * Este test verifica que cambiarEstado actualiza el estado de la solicitud y llama a save.
+     */
+    @Test
+    public void testCambiarEstado() {
+        Solicitud solicitud = new Solicitud();
+        solicitud.setEstado(EstadoSolicitud.ABIERTA);
+
+        solicitudService.cambiarEstado(solicitud, EstadoSolicitud.EN_PROCESO);
+
+        assertEquals(EstadoSolicitud.EN_PROCESO, solicitud.getEstado(), "El estado debe haber cambiado a EN_PROCESO");
+        verify(solicitudRepository).save(solicitud);
+    }
 }
