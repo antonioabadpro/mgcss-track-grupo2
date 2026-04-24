@@ -1,13 +1,37 @@
 package com.mgcss.domain;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "solicitud")
 public class Solicitud {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EstadoSolicitud estado;
+
+    @Column(nullable = false, length = 10)
     private String fechaCreacion;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "tecnico_id")
     private Tecnico tecnico;
 
     public Solicitud() {
@@ -19,6 +43,10 @@ public class Solicitud {
 
     public Long getId() {
         return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public EstadoSolicitud getEstado() {
@@ -46,9 +74,8 @@ public class Solicitud {
         return false;
     }
 
-    public boolean setTecnico(Tecnico tecnico){
-
-        if(tecnico.isTecnicoActivo() == true){
+    public boolean setTecnico(Tecnico tecnico) {
+        if (tecnico != null && tecnico.isTecnicoActivo()) {
             this.tecnico = tecnico;
             return true;
         }
@@ -70,5 +97,4 @@ public class Solicitud {
         }
         return false;
     }
-
 }
