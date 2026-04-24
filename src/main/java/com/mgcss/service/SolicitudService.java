@@ -1,5 +1,10 @@
 package com.mgcss.service;
 
+import com.mgcss.domain.Solicitud;
+import com.mgcss.domain.Tecnico;
+import com.mgcss.domain.EstadoSolicitud;
+import com.mgcss.infraestructure.repository.SolicitudRepository;
+
 public class SolicitudService {
 	
 	private final SolicitudRepository solicitudRepository;
@@ -12,7 +17,10 @@ public class SolicitudService {
 		return solicitudRepository.save(solicitud);
 	}
 	
-	public void asignarTecnico(Solicitud solicitud, Tecnico tecnico) {
+	public void asignarTecnico(Long solicitudId, Tecnico tecnico) {
+		Solicitud solicitud = solicitudRepository.findById(solicitudId)
+				.orElseThrow(() -> new IllegalArgumentException("La solicitud no existe"));
+		solicitud.setEstado(EstadoSolicitud.EN_PROCESO);
 		solicitud.setTecnico(tecnico);
 		solicitudRepository.save(solicitud);
 	}
