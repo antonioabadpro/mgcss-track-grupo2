@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+@Tag("domain")
 @SpringBootTest
 public class TecnicoTests {
     /**
@@ -81,6 +83,36 @@ public class TecnicoTests {
             assertEquals("El tecnico NO puede ser menor de edad.", e.getMessage());
         }
     }
-}
 
-    
+    /**
+     * Este test verifica que el constructor con nombre y edad inicializa correctamente el técnico.
+     */
+    @Test
+    void testConstructorNombreYEdad() {
+        Tecnico tecnico = new Tecnico("Ana García", 25);
+
+        assertEquals("Ana García", tecnico.getNombre(), "El nombre debería ser 'Ana García'");
+        assertEquals(25, tecnico.getEdad(), "La edad debería ser 25");
+    }
+
+    /**
+     * Este test verifica que getId() devuelve null cuando el técnico no ha sido persistido.
+     */
+    @Test
+    void testGetIdEsNullSinPersistir() {
+        Tecnico tecnico = new Tecnico();
+        org.junit.jupiter.api.Assertions.assertNull(tecnico.getId(), "El ID debe ser null antes de persistir");
+    }
+
+    /**
+     * Este test verifica que setTecnico con null devuelve false y no asigna técnico.
+     */
+    @Test
+    void testSetTecnicoNullDevuelveFalse() {
+        Solicitud solicitud = new Solicitud();
+        boolean resultado = solicitud.setTecnico(null);
+
+        assertFalse(resultado, "setTecnico(null) debe retornar false");
+        org.junit.jupiter.api.Assertions.assertNull(solicitud.getTecnico(), "El técnico debe seguir siendo null");
+    }
+}
