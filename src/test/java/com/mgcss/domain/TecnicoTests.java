@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @Tag("domain")
 @SpringBootTest
-public class TecnicoTests {
+class TecnicoTests {
     /**
      * Este test verifica que un técnico activo puede estar asignado a una solicitud.
      */

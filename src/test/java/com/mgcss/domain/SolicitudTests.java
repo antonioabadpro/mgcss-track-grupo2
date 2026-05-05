@@ -117,7 +117,4 @@ class SolicitudTests {
 		assertEquals(EstadoSolicitud.CERRADA, solicitud.getEstado(), "La solicitud no debería cambiar de estado si no está en estado 'Abierta'.");
 		assertEquals(false, esProcesada, "El método procesarSolicitud debería retornar false para una solicitud que no está en estado 'Abierta'.");
 	}
-
-
-
 }
