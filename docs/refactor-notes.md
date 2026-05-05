@@ -29,3 +29,14 @@ Revisando el código base y los Code Smells marcados, se han identificado los si
 * **Riesgo y Justificación:** A diferencia de JUnit 4, que requería que todo fuera público, JUnit 5 es más tolerante respecto a la visibilidad. Oficialmente, ni las clases, ni los métodos de prueba, ni los métodos del ciclo de vida necesitan ser `public` (aunque no deben ser `private`). Mantener el modificador `public` sin una razón técnica válida (como herencia entre paquetes) ensucia el código y dificulta la legibilidad.
 
 ---
+
+## 🚀 3. Refactorización Aplicada
+
+* **Técnicas utilizadas:** *Extract Method*, *Encapsulate Field* y *Remove Unnecessary Modifiers*.
+* **Cambios realizados:** 
+  1. **Dominio:** Se ha extraído la validación de la fecha a un método privado `isFormatoFechaValido()`.
+  2. **Dominio:** Se ha extraído la comprobación de estados a métodos privados descriptivos como `puedeSerProcesada()` y `puedeSerCerrada()`.
+  3. **Testing:** Se ha eliminado el modificador `public` de todas las clases y métodos de test, dejándolos con visibilidad por defecto (*package-private*), siguiendo las mejores prácticas de JUnit 5.
+* **Beneficio para el mantenimiento futuro:** El código de dominio ahora es autodocumentado y extensible mediante métodos privados encapsulados. El código de testing es mucho más limpio, fácil de leer y está alineado con los estándares modernos de desarrollo en Java.
+
+---
