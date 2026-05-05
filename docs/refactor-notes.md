@@ -2,10 +2,12 @@
 
 ## 📊 1. Estado Inicial del Proyecto (SonarCloud)
 * **Quality Gate:** Passed ✅
+* **Security Rating:** A (0 Vulnerabilities) 🟢
+* **Reliability Rating:** A (0 Bugs) 🟢
+* **Maintainability Rating:** A (0 Bugs) 🟢
+* **Code Smells (Open Issues):** 8 🟡
 * **Coverage:** 97.7% 🟢
 * **Duplications:** 0.0% 🟢
-* **Security Rating:** A (0 Issues) 🟢
-* **Code Smells (Open Issues):** 8 🟡
 
 ---
 
@@ -40,3 +42,22 @@ Revisando el código base y los Code Smells marcados, se han identificado los si
 * **Beneficio para el mantenimiento futuro:** El código de dominio ahora es autodocumentado y extensible mediante métodos privados encapsulados. El código de testing es mucho más limpio, fácil de leer y está alineado con los estándares modernos de desarrollo en Java.
 
 ---
+
+## 📉 4. Comparativa Post-Refactorización
+
+* **Tests:** Todos los tests (Unitarios y de Integración) siguen en verde.
+* **Comportamiento observable:** Intacto (No se han modificado las firmas públicas de la API de producción).
+* **Mejora en Métricas:** Se ha mantenido el coverage > 80% y se ha mejorado el *Maintainability Rating* al reducir la complejidad ciclomática y limpiar el ruido sintáctico en la suite de pruebas.
+
+---
+
+## 📊 5. Estado Actual del Proyecto (SonarCloud)
+* **Quality Gate:** Passed ✅
+* **Security Rating:** A (0 Vulnerabilities) 🟢
+* **Reliability Rating:** A (0 Bugs) 🟢
+* **Maintainability Rating:** A (0 Bugs) 🟢
+* **Code Smells (Open Issues):** 5 🟡
+* **Coverage:** 97% 🟢
+* **Duplications:** 0.0% 🟢
+* **Complejidad Ciclomática (Cyclomatic Complexity):** 39
+* **Complejidad Cognitiva (Cognitive Complexity):** 7
