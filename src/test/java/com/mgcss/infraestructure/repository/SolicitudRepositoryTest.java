@@ -24,7 +24,7 @@ class SolicitudRepositoryTest {
      * Este test verifica que una solicitud pueda ser guardada y recuperada correctamente de la base de datos.
      */
     @Test
-    public void testGuardarYRecuperarSolicitud() {
+    void testGuardarYRecuperarSolicitud() {
         // Guardar entidad
         Solicitud solicitud = new Solicitud();
         Solicitud solicitudGuardada = solicitudRepository.save(solicitud);
