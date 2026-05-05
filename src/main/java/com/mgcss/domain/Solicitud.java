@@ -49,6 +49,32 @@ public class Solicitud {
     @JoinColumn(name = "tecnico_id")
     private Tecnico tecnico;
 
+    // ************************ METODOS AUXILIARES PRIVADOS ************************
+    /**
+     * Valida que la fecha tenga el formato (DD/MM/YYYY)
+     * @param fecha Fecha cuyo formato queremos validar
+     * @return Devuelve 'true' si la fecha es válida y 'false' en caso contrario
+     */
+    private boolean esFechaValida(String fecha) {
+        return fecha!=null && fecha.matches("\\d{2}/\\d{2}/\\d{4}");
+    }
+
+    /**
+     * Valida si la solicitud puede ser procesada (debe estar en estado 'Abierta')
+     * @return Devuelve 'true' si la solicitud puede ser procesada y 'false' en caso contrario
+     */
+    private boolean puedeSerProcesada() {
+        return this.estado == EstadoSolicitud.ABIERTA;
+    }
+
+    /**
+     * Valida si la solicitud puede ser cerrada (debe estar en estado 'En Proceso')
+     * @return Devuelve 'true' si la solicitud puede ser cerrada y 'false' en caso contrario
+     */
+    private boolean puedeSerCerrada() {
+        return this.estado == EstadoSolicitud.EN_PROCESO;
+    }
+
     /**
      * Constructor por defecto de la clase Solicitud
      */
@@ -114,7 +140,7 @@ public class Solicitud {
      */
     public boolean setFechaCreacion(String fechaCreacion) {
         // Si la fecha tiene el formato (DD/MM/YYYY) se establece la fecha
-        if (fechaCreacion.matches("\\d{2}/\\d{2}/\\d{4}")) {
+        if (esFechaValida(fechaCreacion)) {
             this.fechaCreacion = fechaCreacion;
             return true;
         }
@@ -139,7 +165,7 @@ public class Solicitud {
      * @return true si la solicitud se procesó correctamente, false en caso contrario
      */
     public boolean procesarSolicitud() {
-        if (this.estado == EstadoSolicitud.ABIERTA) {
+        if (puedeSerProcesada()) {
             this.estado = EstadoSolicitud.EN_PROCESO;
             return true;
         }
@@ -151,7 +177,7 @@ public class Solicitud {
      * @return true si la solicitud se cerró correctamente, false en caso contrario
      */
     public boolean cerrarSolicitud() {
-        if (this.estado == EstadoSolicitud.EN_PROCESO) {
+        if (puedeSerCerrada()) {
             this.estado = EstadoSolicitud.CERRADA;
             return true;
         }
