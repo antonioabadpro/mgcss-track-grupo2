@@ -56,7 +56,7 @@ Revisando el código base y los Code Smells marcados, se han identificado los si
 * **Security Rating:** A (0 Vulnerabilities) 🟢
 * **Reliability Rating:** A (0 Bugs) 🟢
 * **Maintainability Rating:** A (0 Bugs) 🟢
-* **Code Smells (Open Issues):** 5 🟡
+* **Code Smells (Open Issues):** 0 🟢
 * **Coverage:** 97% 🟢
 * **Duplications:** 0.0% 🟢
 * **Complejidad Ciclomática (Cyclomatic Complexity):** 39
