@@ -21,7 +21,7 @@ import com.mgcss.infraestructure.repository.SolicitudRepository;
 @Tag("service")
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-public class SolicitudServiceTest {
+class SolicitudServiceTest {
 
     @Mock
     private SolicitudRepository solicitudRepository;
@@ -33,7 +33,7 @@ public class SolicitudServiceTest {
      * Este test verifica que un técnico pueda ser asignado a una solicitud correctamente.
      */
     @Test
-    public void testAsignarTecnico_Valido() {
+    void testAsignarTecnico_Valido() {
         // 1. Crear mock de SolicitudRepository (ya hecho con @Mock)
         Long solicitudId = 1L;
         Solicitud solicitud = new Solicitud();
@@ -62,7 +62,7 @@ public class SolicitudServiceTest {
      * Este test verifica que no se pueda asignar un técnico a una solicitud que no existe.
      */
     @Test
-    public void testAsignarTecnico_SolicitudNoExiste_LanzaExcepcion() {
+    void testAsignarTecnico_SolicitudNoExiste_LanzaExcepcion() {
         Long solicitudId = 99L;
         Tecnico tecnico = new Tecnico();
         tecnico.setId(10L);
@@ -81,7 +81,7 @@ public class SolicitudServiceTest {
      * Este test verifica que crearSolicitud guarda y retorna la solicitud.
      */
     @Test
-    public void testCrearSolicitud() {
+    void testCrearSolicitud() {
         Solicitud solicitud = new Solicitud();
         when(solicitudRepository.save(solicitud)).thenReturn(solicitud);
 
@@ -95,7 +95,7 @@ public class SolicitudServiceTest {
      * Este test verifica que cambiarEstado actualiza el estado de la solicitud y llama a save.
      */
     @Test
-    public void testCambiarEstado() {
+    void testCambiarEstado() {
         Solicitud solicitud = new Solicitud();
         solicitud.setEstado(EstadoSolicitud.ABIERTA);
 
