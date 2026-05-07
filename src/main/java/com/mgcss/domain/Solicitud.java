@@ -52,6 +52,32 @@ public class Solicitud {
     @JoinColumn(name = "tecnico_id")
     private Tecnico tecnico;
 
+    // ************************ METODOS AUXILIARES PRIVADOS ************************
+    /**
+     * Valida que la fecha tenga el formato (DD/MM/YYYY)
+     * @param fecha Fecha cuyo formato queremos validar
+     * @return Devuelve 'true' si la fecha es válida y 'false' en caso contrario
+     */
+    private boolean esFechaValida(String fecha) {
+        return fecha!=null && fecha.matches("\\d{2}/\\d{2}/\\d{4}");
+    }
+
+    /**
+     * Valida si la solicitud puede ser procesada (debe estar en estado 'Abierta')
+     * @return Devuelve 'true' si la solicitud puede ser procesada y 'false' en caso contrario
+     */
+    private boolean puedeSerProcesada() {
+        return this.estado == EstadoSolicitud.ABIERTA;
+    }
+
+    /**
+     * Valida si la solicitud puede ser cerrada (debe estar en estado 'En Proceso')
+     * @return Devuelve 'true' si la solicitud puede ser cerrada y 'false' en caso contrario
+     */
+    private boolean puedeSerCerrada() {
+        return this.estado == EstadoSolicitud.EN_PROCESO;
+    }
+
     /**
      * Historial de estados de la solicitud
      */

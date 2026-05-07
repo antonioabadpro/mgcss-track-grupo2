@@ -2,12 +2,10 @@
 
 ## 📊 1. Estado Inicial del Proyecto (SonarCloud)
 * **Quality Gate:** Passed ✅
-* **Security Rating:** A (0 Vulnerabilities) 🟢
-* **Reliability Rating:** A (0 Bugs) 🟢
-* **Maintainability Rating:** A (0 Bugs) 🟢
-* **Code Smells (Open Issues):** 8 🟡
 * **Coverage:** 97.7% 🟢
 * **Duplications:** 0.0% 🟢
+* **Security Rating:** A (0 Issues) 🟢
+* **Code Smells (Open Issues):** 8 🟡
 
 ---
 
