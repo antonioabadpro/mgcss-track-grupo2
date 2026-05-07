@@ -52,32 +52,6 @@ public class Solicitud {
     @JoinColumn(name = "tecnico_id")
     private Tecnico tecnico;
 
-    // ************************ METODOS AUXILIARES PRIVADOS ************************
-    /**
-     * Valida que la fecha tenga el formato (DD/MM/YYYY)
-     * @param fecha Fecha cuyo formato queremos validar
-     * @return Devuelve 'true' si la fecha es válida y 'false' en caso contrario
-     */
-    private boolean esFechaValida(String fecha) {
-        return fecha!=null && fecha.matches("\\d{2}/\\d{2}/\\d{4}");
-    }
-
-    /**
-     * Valida si la solicitud puede ser procesada (debe estar en estado 'Abierta')
-     * @return Devuelve 'true' si la solicitud puede ser procesada y 'false' en caso contrario
-     */
-    private boolean puedeSerProcesada() {
-        return this.estado == EstadoSolicitud.ABIERTA;
-    }
-
-    /**
-     * Valida si la solicitud puede ser cerrada (debe estar en estado 'En Proceso')
-     * @return Devuelve 'true' si la solicitud puede ser cerrada y 'false' en caso contrario
-     */
-    private boolean puedeSerCerrada() {
-        return this.estado == EstadoSolicitud.EN_PROCESO;
-    }
-
     /**
      * Historial de estados de la solicitud
      */
@@ -88,16 +62,19 @@ public class Solicitud {
     // ************************ METODOS AUXILIARES PRIVADOS ************************
     /**
      * Valida que la fecha tenga el formato (DD/MM/YYYY)
+     * 
      * @param fecha Fecha cuyo formato queremos validar
      * @return Devuelve 'true' si la fecha es válida y 'false' en caso contrario
      */
     private boolean esFechaValida(String fecha) {
-        return fecha!=null && fecha.matches("\\d{2}/\\d{2}/\\d{4}");
+        return fecha != null && fecha.matches("\\d{2}/\\d{2}/\\d{4}");
     }
 
     /**
      * Valida si la solicitud puede ser procesada (debe estar en estado 'Abierta')
-     * @return Devuelve 'true' si la solicitud puede ser procesada y 'false' en caso contrario
+     * 
+     * @return Devuelve 'true' si la solicitud puede ser procesada y 'false' en caso
+     *         contrario
      */
     private boolean puedeSerProcesada() {
         return this.estado == EstadoSolicitud.ABIERTA;
@@ -105,7 +82,9 @@ public class Solicitud {
 
     /**
      * Valida si la solicitud puede ser cerrada (debe estar en estado 'En Proceso')
-     * @return Devuelve 'true' si la solicitud puede ser cerrada y 'false' en caso contrario
+     * 
+     * @return Devuelve 'true' si la solicitud puede ser cerrada y 'false' en caso
+     *         contrario
      */
     private boolean puedeSerCerrada() {
         return this.estado == EstadoSolicitud.EN_PROCESO;
@@ -116,14 +95,17 @@ public class Solicitud {
      */
     public Solicitud() {
         this.estado = EstadoSolicitud.ABIERTA;
-        // Establece la fecha de creación al momento de instanciar la solicitud con el formato (DD/MM/YYYY)
-        this.fechaCreacion = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        // Establece la fecha de creación al momento de instanciar la solicitud con el
+        // formato (DD/MM/YYYY)
+        this.fechaCreacion = java.time.LocalDate.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         this.tecnico = null;
         registrarCambioEstado(this.estado);
     }
 
     /**
      * Obtiene el id de la solicitud
+     * 
      * @return Id de la solicitud
      */
     public Long getId() {
@@ -132,6 +114,7 @@ public class Solicitud {
 
     /**
      * Establece el id de la solicitud
+     * 
      * @param id Id de la solicitud
      */
     public void setId(Long id) {
@@ -140,6 +123,7 @@ public class Solicitud {
 
     /**
      * Obtiene el estado de la solicitud
+     * 
      * @return Estado de la solicitud
      */
     public EstadoSolicitud getEstado() {
@@ -148,6 +132,7 @@ public class Solicitud {
 
     /**
      * Obtiene el técnico asignado a la solicitud
+     * 
      * @return Técnico asignado a la solicitud
      */
     public Tecnico getTecnico() {
@@ -156,6 +141,7 @@ public class Solicitud {
 
     /**
      * Obtiene el histórico de estados
+     * 
      * @return Lista de estados históricos
      */
     public List<EstadoHistorico> getHistoricoEstados() {
@@ -164,6 +150,7 @@ public class Solicitud {
 
     /**
      * Establece el estado de la solicitud
+     * 
      * @param estado Estado de la solicitud
      */
     public void setEstado(EstadoSolicitud estado) {
@@ -172,6 +159,7 @@ public class Solicitud {
 
     /**
      * Obtiene la fecha de creación de la solicitud
+     * 
      * @return Fecha de creación de la solicitud
      */
     public String getFechaCreacion() {
@@ -180,6 +168,7 @@ public class Solicitud {
 
     /**
      * Establece la fecha de creación de la solicitud
+     * 
      * @param fechaCreacion Fecha de creación de la solicitud
      * @return true si la fecha se estableció correctamente, false en caso contrario
      */
@@ -194,8 +183,10 @@ public class Solicitud {
 
     /**
      * Establece el técnico asignado a la solicitud
+     * 
      * @param tecnico Técnico asignado a la solicitud
-     * @return true si el técnico se estableció correctamente, false en caso contrario
+     * @return true si el técnico se estableció correctamente, false en caso
+     *         contrario
      */
     public boolean setTecnico(Tecnico tecnico) {
         if (tecnico != null && tecnico.isTecnicoActivo()) {
@@ -207,7 +198,9 @@ public class Solicitud {
 
     /**
      * Procesa la solicitud
-     * @return true si la solicitud se procesó correctamente, false en caso contrario
+     * 
+     * @return true si la solicitud se procesó correctamente, false en caso
+     *         contrario
      */
     public boolean procesarSolicitud() {
         if (puedeSerProcesada()) {
@@ -220,6 +213,7 @@ public class Solicitud {
 
     /**
      * Cierra la solicitud
+     * 
      * @return true si la solicitud se cerró correctamente, false en caso contrario
      */
     public boolean cerrarSolicitud() {
@@ -233,7 +227,9 @@ public class Solicitud {
 
     /**
      * Reabre la solicitud
-     * @return true si la solicitud se reabrió correctamente, false en caso contrario
+     * 
+     * @return true si la solicitud se reabrió correctamente, false en caso
+     *         contrario
      */
     public boolean reabrir() {
         if (this.estado == EstadoSolicitud.CERRADA) {
