@@ -21,3 +21,10 @@ En base a la descripción funcional proporcionada para la nueva funcionalidad ("
 ### 5. ¿Qué impacto tiene en persistencia?
 - **Nueva tabla en base de datos**: Se requiere la creación de una nueva tabla correspondiente a la entidad `EstadoHistorico`, enlazada mediante una clave foránea con la tabla de las solicitudes (relación 1:N).
 - **Rendimiento e indexación**: El volumen de los datos aumentará sistemáticamente. Es vital asegurar la creación de índices, en particular sobre el ID de la solicitud en la nueva tabla, para que la consulta del histórico sea eficiente.
+
+### 6. Diseño de la estructura del histórico
+**Opción seleccionada**: Entidad separada `EstadoHistorico`.
+**Justificación**: 
+1. **Atributos complejos**: Necesitamos almacenar no solo el estado, sino también la fecha/hora en la que ocurrió el cambio (y potencialmente el técnico que lo hizo en el futuro). Una lista interna simple o un _Value Object_ se quedarían cortos si necesitamos escalar esta información.
+2. **Consultas independientes**: Al ser una entidad separada (mapeada a su propia tabla en la base de datos), permite realizar consultas analíticas o de auditoría más eficientes (ej. "¿Cuántas solicitudes pasaron a CERRADA hoy?") sin tener que cargar la entidad raíz `Solicitud`.
+3. **Escalabilidad y buenas prácticas JPA**: Modela correctamente una relación 1:N donde el ciclo de vida del histórico pertenece a la solicitud, manteniendo una estructura de base de datos relacional limpia e indexable.
