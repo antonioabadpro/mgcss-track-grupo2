@@ -183,4 +183,16 @@ public class Solicitud {
         }
         return false;
     }
+
+    /**
+     * Reabre la solicitud
+     * @return true si la solicitud se reabrió correctamente, false en caso contrario
+     */
+    public boolean reabrir() {
+        if (this.estado == EstadoSolicitud.CERRADA) {
+            this.estado = EstadoSolicitud.EN_PROCESO;
+            return true;
+        }
+        return false;
+    }
 }

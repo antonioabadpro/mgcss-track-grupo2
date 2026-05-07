@@ -117,4 +117,18 @@ class SolicitudTests {
 		assertEquals(EstadoSolicitud.CERRADA, solicitud.getEstado(), "La solicitud no debería cambiar de estado si no está en estado 'Abierta'.");
 		assertEquals(false, esProcesada, "El método procesarSolicitud debería retornar false para una solicitud que no está en estado 'Abierta'.");
 	}
+
+	/**
+	 * Este test verifica que el estado de una solicitud 'Cerrada' cambie al estado "En Proceso" al reabrirla.
+	 */
+	@Test
+	void testReabrirSolicitudCerrada() {
+		Solicitud solicitud = new Solicitud();
+		solicitud.setEstado(EstadoSolicitud.CERRADA);
+		
+		boolean esReabierta = solicitud.reabrir();
+		
+		assertEquals(EstadoSolicitud.EN_PROCESO, solicitud.getEstado(), "La solicitud debería actualizarse al estado 'En Proceso' después de reabrirla.");
+		assertEquals(true, esReabierta, "La Solicitud debería ser reabierta.");
+	}
 }
