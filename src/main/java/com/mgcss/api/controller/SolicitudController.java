@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/solicitudes")
 @Tag(name = "SolicitudController", description = "Endpoints para gestionar solicitudes")
+@CrossOrigin(origins = "*") // Permitir CORS para que la pagina web pueda ser accedida desde cualquier origen
 public class SolicitudController {
 
     private final SolicitudService solicitudService;
