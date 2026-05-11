@@ -75,6 +75,7 @@ public class SolicitudController {
     @Operation(summary = "Consultar solicitud", description = "Obtiene los detalles de una solicitud mediante el ID de dicha solicitud.")
     @ApiResponse(responseCode = "200", description = "Solicitud encontrada con éxito.")
     @ApiResponse(responseCode = "404", description = "Solicitud no encontrada.")
+    @ApiResponse(responseCode = "500", description = "No existe la solicitud con el ID introducido.")
     public ResponseEntity<SolicitudResponseDTO> consultarSolicitud(@PathVariable Long id) {
         Solicitud solicitud = solicitudService.consultarSolicitud(id);
         return ResponseEntity.ok(mapToResponseDTO(solicitud));
@@ -87,6 +88,8 @@ public class SolicitudController {
     @Operation(summary = "Asignar técnico", description = "Asigna un técnico a una solicitud existente.")
     @ApiResponse(responseCode = "200", description = "Técnico asignado con éxito.")
     @ApiResponse(responseCode = "400", description = "Solicitud no encontrada o técnico inválido.")
+    @ApiResponse(responseCode = "404", description = "Solicitud no encontrada.")
+    @ApiResponse(responseCode = "500", description = "No existe la solicitud con el ID introducido.")
     public ResponseEntity<Void> asignarTecnico(@PathVariable Long id, @RequestBody SolicitudRequestDTO requestDTO) {
         if (requestDTO.getTecnicoId() == null) {
             return ResponseEntity.badRequest().build();
@@ -106,6 +109,7 @@ public class SolicitudController {
     @ApiResponse(responseCode = "200", description = "Estado cambiado con éxito.")
     @ApiResponse(responseCode = "400", description = "Solicitud no encontrada o estado inválido.")
     @ApiResponse(responseCode = "404", description = "Solicitud no encontrada.")
+    @ApiResponse(responseCode = "500", description = "No existe la solicitud con el ID introducido.")
     public ResponseEntity<Void> cambiarEstado(@PathVariable Long id, @RequestBody SolicitudRequestDTO requestDTO) {
         if (requestDTO.getEstado() == null) {
             return ResponseEntity.badRequest().build();
@@ -123,6 +127,7 @@ public class SolicitudController {
     @ApiResponse(responseCode = "200", description = "Solicitud reabierta con éxito.)")
     @ApiResponse(responseCode = "400", description = "Solicitud no encontrada o estado no permitido para reabrir.")
     @ApiResponse(responseCode = "404", description = "Solicitud no encontrada.")
+    @ApiResponse(responseCode = "500", description = "No existe la solicitud con el ID introducido.")
     public ResponseEntity<Void> reabrirSolicitud(@PathVariable Long id) {
         solicitudService.reabrirSolicitud(id);
         return ResponseEntity.ok().build();
@@ -134,6 +139,7 @@ public class SolicitudController {
     @GetMapping
     @Operation(summary = "Listar solicitudes", description = "Obtiene una lista de todas las solicitudes.")
     @ApiResponse(responseCode = "200", description = "Solicitudes listadas con éxito.")
+    @ApiResponse(responseCode = "500", description = "No hay ninguna solicitud en el Servidor.")
     public ResponseEntity<List<SolicitudResponseDTO>> listarSolicitudes() {
         List<Solicitud> solicitudes = solicitudService.listarSolicitudes();
         List<SolicitudResponseDTO> dtoList = solicitudes.stream()
