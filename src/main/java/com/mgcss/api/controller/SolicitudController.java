@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/solicitudes")
 @Tag(name = "SolicitudController", description = "Endpoints para gestionar solicitudes")
-@CrossOrigin(origins = "*") // Permitir CORS para que la pagina web pueda ser accedida desde cualquier origen
+@CrossOrigin(origins = {"http://localhost:5500", "http://127.0.0.1:5500"}) // Permitir CORS para que la pagina web pueda ser accedida desde local desde el puerto 5500 (Live Server de VSCode)
 public class SolicitudController {
 
     private final SolicitudService solicitudService;
