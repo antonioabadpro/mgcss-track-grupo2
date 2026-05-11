@@ -109,7 +109,7 @@ public class SolicitudController {
     @ApiResponse(responseCode = "200", description = "Estado cambiado con éxito.")
     @ApiResponse(responseCode = "400", description = "Solicitud no encontrada o estado inválido.")
     @ApiResponse(responseCode = "404", description = "Solicitud no encontrada.")
-    @ApiResponse(responseCode = "500", description = "No existe la solicitud con el ID introducido.")
+    @ApiResponse(responseCode = "500", description = "No existe la Solicitud o el Técnico con el ID introducido.")
     public ResponseEntity<Void> cambiarEstado(@PathVariable Long id, @RequestBody SolicitudRequestDTO requestDTO) {
         if (requestDTO.getEstado() == null) {
             return ResponseEntity.badRequest().build();
