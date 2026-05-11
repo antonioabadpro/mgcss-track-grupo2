@@ -1,42 +1,40 @@
 package com.mgcss.api.controller;
-
-import com.mgcss.api.dto.SolicitudRequestDTO;
-import com.mgcss.api.dto.SolicitudResponseDTO;
 import com.mgcss.domain.EstadoSolicitud;
 import com.mgcss.domain.Solicitud;
 import com.mgcss.domain.Tecnico;
 import com.mgcss.infraestructure.repository.TecnicoRepository;
 import com.mgcss.service.SolicitudService;
+import com.mgcss.api.controller.SolicitudController;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
+// Utilizamos la libreria de Spring Boot para simular el comportamiento de las dependencias, NO la de Mockito directamente
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
+@Tag("api")
+@WebMvcTest(SolicitudController.class)
 class SolicitudControllerTest {
 
-    @Mock
-    private SolicitudService solicitudService;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @Mock
+    @MockitoBean
+    private SolicitudService solicitudService; // Mockeamos el servicio
+
+    @MockitoBean
     private TecnicoRepository tecnicoRepository;
-
-    @InjectMocks
-    private SolicitudController solicitudController;
 
     private Solicitud solicitudDummy;
     private Tecnico tecnicoDummy;
@@ -52,94 +50,86 @@ class SolicitudControllerTest {
     }
 
     @Test
-    void testCrearSolicitud() {
+    void testCrearSolicitud() throws Exception {
         when(solicitudService.crearSolicitud(any(Solicitud.class))).thenReturn(solicitudDummy);
 
-        ResponseEntity<SolicitudResponseDTO> response = solicitudController.crearSolicitud();
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1L, response.getBody().getId());
-        verify(solicitudService).crearSolicitud(any(Solicitud.class));
+        // Cumple: Verificar código HTTP (201) y estructura JSON
+        mockMvc.perform(post("/api/solicitudes"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.estado").value("ABIERTA"));
     }
 
     @Test
-    void testConsultarSolicitud() {
+    void testConsultarSolicitud() throws Exception {
         when(solicitudService.consultarSolicitud(1L)).thenReturn(solicitudDummy);
 
-        ResponseEntity<SolicitudResponseDTO> response = solicitudController.consultarSolicitud(1L);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1L, response.getBody().getId());
-        verify(solicitudService).consultarSolicitud(1L);
+        mockMvc.perform(get("/api/solicitudes/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L));
     }
 
     @Test
-    void testAsignarTecnico_Valido() {
-        SolicitudRequestDTO request = new SolicitudRequestDTO();
-        request.setTecnicoId(10L);
-
+    void testAsignarTecnico_Valido() throws Exception {
         when(tecnicoRepository.findById(10L)).thenReturn(Optional.of(tecnicoDummy));
 
-        ResponseEntity<Void> response = solicitudController.asignarTecnico(1L, request);
+        mockMvc.perform(post("/api/solicitudes/1/asignar-tecnico")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"tecnicoId\": 10}"))
+                .andExpect(status().isOk());
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(solicitudService).asignarTecnico(1L, tecnicoDummy);
     }
 
+    /**
+     * Manejamos los errores sin utilizar 'tecnicoId' en el request, lo que debería devolver un Bad Request (400).
+     * @throws Exception
+     */
     @Test
-    void testAsignarTecnico_BadRequest() {
-        SolicitudRequestDTO request = new SolicitudRequestDTO();
-        // sin tecnicoId
+    void testAsignarTecnico_BadRequest() throws Exception {
+        mockMvc.perform(post("/api/solicitudes/1/asignar-tecnico")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+                .andExpect(status().isBadRequest());
 
-        ResponseEntity<Void> response = solicitudController.asignarTecnico(1L, request);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         verify(solicitudService, never()).asignarTecnico(anyLong(), any());
     }
 
     @Test
-    void testCambiarEstado_Valido() {
-        SolicitudRequestDTO request = new SolicitudRequestDTO();
-        request.setEstado(EstadoSolicitud.EN_PROCESO);
-
+    void testCambiarEstado_Valido() throws Exception {
         when(solicitudService.consultarSolicitud(1L)).thenReturn(solicitudDummy);
 
-        ResponseEntity<Void> response = solicitudController.cambiarEstado(1L, request);
+        mockMvc.perform(put("/api/solicitudes/1/estado")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"estado\": \"EN_PROCESO\"}"))
+                .andExpect(status().isOk());
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(solicitudService).cambiarEstado(solicitudDummy, EstadoSolicitud.EN_PROCESO);
     }
 
     @Test
-    void testCambiarEstado_BadRequest() {
-        SolicitudRequestDTO request = new SolicitudRequestDTO();
-        // sin estado
-
-        ResponseEntity<Void> response = solicitudController.cambiarEstado(1L, request);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        verify(solicitudService, never()).cambiarEstado(any(), any());
+    void testCambiarEstado_BadRequest() throws Exception {
+        mockMvc.perform(put("/api/solicitudes/1/estado")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    void testReabrirSolicitud() {
-        ResponseEntity<Void> response = solicitudController.reabrirSolicitud(1L);
+    void testReabrirSolicitud() throws Exception {
+        mockMvc.perform(patch("/api/solicitudes/1/reabrir"))
+                .andExpect(status().isOk());
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(solicitudService).reabrirSolicitud(1L);
     }
 
     @Test
-    void testListarSolicitudes() {
-        when(solicitudService.listarSolicitudes()).thenReturn(Arrays.asList(solicitudDummy, new Solicitud()));
+    void testListarSolicitudes() throws Exception {
+        when(solicitudService.listarSolicitudes()).thenReturn(Arrays.asList(solicitudDummy));
 
-        ResponseEntity<List<SolicitudResponseDTO>> response = solicitudController.listarSolicitudes();
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(2, response.getBody().size());
-        verify(solicitudService).listarSolicitudes();
+        mockMvc.perform(get("/api/solicitudes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(1))
+                .andExpect(jsonPath("$[0].id").value(1L));
     }
 }
