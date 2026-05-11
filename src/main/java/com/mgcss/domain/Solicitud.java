@@ -1,7 +1,5 @@
 package com.mgcss.domain;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,6 +14,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 /**
@@ -97,8 +98,8 @@ public class Solicitud {
         this.estado = EstadoSolicitud.ABIERTA;
         // Establece la fecha de creación al momento de instanciar la solicitud con el
         // formato (DD/MM/YYYY)
-        this.fechaCreacion = java.time.LocalDate.now()
-                .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        this.fechaCreacion = LocalDate.now()
+                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         this.tecnico = null;
         registrarCambioEstado(this.estado);
     }
@@ -244,6 +245,6 @@ public class Solicitud {
      * Registra un cambio en el histórico de la solicitud
      */
     private void registrarCambioEstado(EstadoSolicitud nuevoEstado) {
-        this.historicoEstados.add(new EstadoHistorico(nuevoEstado, java.time.LocalDateTime.now()));
+        this.historicoEstados.add(new EstadoHistorico(nuevoEstado, LocalDateTime.now()));
     }
 }

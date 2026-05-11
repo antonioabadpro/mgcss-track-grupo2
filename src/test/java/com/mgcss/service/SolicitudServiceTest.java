@@ -20,7 +20,6 @@ import com.mgcss.infraestructure.repository.SolicitudRepository;
 
 @Tag("service")
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
 class SolicitudServiceTest {
 
     @Mock
@@ -30,7 +29,8 @@ class SolicitudServiceTest {
     private SolicitudService solicitudService;
 
     /**
-     * Este test verifica que un técnico pueda ser asignado a una solicitud correctamente.
+     * Este test verifica que un técnico pueda ser asignado a una solicitud
+     * correctamente.
      */
     @Test
     void testAsignarTecnico_Valido() {
@@ -39,7 +39,7 @@ class SolicitudServiceTest {
         Solicitud solicitud = new Solicitud();
         solicitud.setId(solicitudId);
         solicitud.setEstado(EstadoSolicitud.ABIERTA);
-        
+
         Tecnico tecnico = new Tecnico();
         tecnico.setId(10L);
         tecnico.setTecnicoActivo();
@@ -59,7 +59,8 @@ class SolicitudServiceTest {
     }
 
     /**
-     * Este test verifica que no se pueda asignar un técnico a una solicitud que no existe.
+     * Este test verifica que no se pueda asignar un técnico a una solicitud que no
+     * existe.
      */
     @Test
     void testAsignarTecnico_SolicitudNoExiste_LanzaExcepcion() {
@@ -87,12 +88,13 @@ class SolicitudServiceTest {
 
         Solicitud resultado = solicitudService.crearSolicitud(solicitud);
 
-        assertEquals(solicitud, resultado, "La solicitud retornada debe ser la misma que se guardó");
+        assertEquals(solicitud, resultado, "La solicitud devuelta debe ser la misma que se guardó");
         verify(solicitudRepository).save(solicitud);
     }
 
     /**
-     * Este test verifica que cambiarEstado actualiza el estado de la solicitud y llama a save.
+     * Este test verifica que cambiarEstado actualiza el estado de la solicitud y
+     * llama a save.
      */
     @Test
     void testCambiarEstado() {
@@ -102,6 +104,49 @@ class SolicitudServiceTest {
         solicitudService.cambiarEstado(solicitud, EstadoSolicitud.EN_PROCESO);
 
         assertEquals(EstadoSolicitud.EN_PROCESO, solicitud.getEstado(), "El estado debe haber cambiado a EN_PROCESO");
+        verify(solicitudRepository).save(solicitud);
+    }
+
+    @Test
+    void testConsultarSolicitud() {
+        Solicitud solicitud = new Solicitud();
+        solicitud.setId(1L);
+        when(solicitudRepository.findById(1L)).thenReturn(Optional.of(solicitud));
+
+        Solicitud resultado = solicitudService.consultarSolicitud(1L);
+
+        assertEquals(solicitud, resultado);
+        verify(solicitudRepository).findById(1L);
+    }
+
+    @Test
+    void testConsultarSolicitud_NoExiste() {
+        when(solicitudRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> solicitudService.consultarSolicitud(1L));
+    }
+
+    @Test
+    void testListarSolicitudes() {
+        java.util.List<Solicitud> lista = java.util.Arrays.asList(new Solicitud(), new Solicitud());
+        when(solicitudRepository.findAll()).thenReturn(lista);
+
+        java.util.List<Solicitud> resultado = solicitudService.listarSolicitudes();
+
+        assertEquals(2, resultado.size());
+        verify(solicitudRepository).findAll();
+    }
+
+    @Test
+    void testReabrirSolicitud() {
+        Solicitud solicitud = new Solicitud();
+        solicitud.setId(1L);
+        solicitud.setEstado(EstadoSolicitud.CERRADA);
+        when(solicitudRepository.findById(1L)).thenReturn(Optional.of(solicitud));
+
+        solicitudService.reabrirSolicitud(1L);
+
+        assertEquals(EstadoSolicitud.EN_PROCESO, solicitud.getEstado());
         verify(solicitudRepository).save(solicitud);
     }
 }
