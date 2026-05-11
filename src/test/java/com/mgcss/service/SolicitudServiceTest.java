@@ -20,7 +20,6 @@ import com.mgcss.infraestructure.repository.SolicitudRepository;
 
 @Tag("service")
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
 class SolicitudServiceTest {
 
     @Mock
@@ -89,7 +88,7 @@ class SolicitudServiceTest {
 
         Solicitud resultado = solicitudService.crearSolicitud(solicitud);
 
-        assertEquals(solicitud, resultado, "La solicitud retornada debe ser la misma que se guardó");
+        assertEquals(solicitud, resultado, "La solicitud devuelta debe ser la misma que se guardó");
         verify(solicitudRepository).save(solicitud);
     }
 

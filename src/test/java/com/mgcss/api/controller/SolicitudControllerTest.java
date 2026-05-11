@@ -188,7 +188,7 @@ class SolicitudControllerTest {
         mockMvc.perform(post("/api/solicitudes/1/asignar-tecnico")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"tecnicoId\": 99}"))
-                .andExpect(status().isNotFound()); // o isBadRequest(), según como lo implementes
+                .andExpect(status().isBadRequest()); // o isBadRequest(), según como lo implementes
     }
 
     /**
