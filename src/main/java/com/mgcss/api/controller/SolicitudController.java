@@ -64,8 +64,14 @@ public class SolicitudController {
     @Operation(summary = "Crear solicitud", description = "Crea una nueva solicitud vacía con estado ABIERTA.")
     @ApiResponse(responseCode = "201", description = "Solicitud creada con éxito.")
     @ApiResponse(responseCode = "400", description = "Error al crear la solicitud.")
-    public ResponseEntity<SolicitudResponseDTO> crearSolicitud() {
+    public ResponseEntity<SolicitudResponseDTO> crearSolicitud(@RequestBody(required = false) SolicitudRequestDTO requestDTO) {
         Solicitud solicitud = new Solicitud();
+        
+        // Si nos envían una descripción en el JSON, se la asignamos
+        if (requestDTO != null && requestDTO.getDescripcion() != null) {
+            solicitud.setDescripcion(requestDTO.getDescripcion());
+        }
+        
         Solicitud creada = solicitudService.crearSolicitud(solicitud);
         return new ResponseEntity<>(mapToResponseDTO(creada), HttpStatus.CREATED);
     }
