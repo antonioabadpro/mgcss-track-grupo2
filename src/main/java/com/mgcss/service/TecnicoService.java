@@ -35,11 +35,32 @@ public class TecnicoService {
     }
 
     /**
+     * Consulta un técnico por su ID.
+     * @param id ID del técnico a consultar
+     * @return Técnico encontrado o excepción si no se encuentra
+     */
+    public Tecnico consultarTecnico(Long id) {
+        return tecnicoRepository.findById(id).orElseThrow(() -> new RuntimeException("Técnico no encontrado"));
+    }
+
+    /**
      * Lista todos los técnicos disponibles en la base de datos.
      *
      * @return Lista de técnicos
      */
     public List<Tecnico> listarTecnicos() {
         return tecnicoRepository.findAll();
+    }
+
+    public void cambiarEstado(Tecnico tecnico, boolean esActivo) {
+        if(tecnico.isTecnicoActivo() && !esActivo) {
+            tecnico.setTecnicoInactivo();
+        }
+        else {
+            if (!tecnico.isTecnicoActivo() && esActivo) {
+                tecnico.setTecnicoActivo();
+            }
+        }
+        tecnicoRepository.save(tecnico);
     }
 }
