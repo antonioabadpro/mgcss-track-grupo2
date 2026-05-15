@@ -128,7 +128,7 @@ class SolicitudTests {
 		
 		boolean esReabierta = solicitud.reabrir();
 		
-		assertEquals(EstadoSolicitud.EN_PROCESO, solicitud.getEstado(), "La solicitud debería actualizarse al estado 'En Proceso' después de reabrirla.");
+		assertEquals(EstadoSolicitud.ABIERTA, solicitud.getEstado(), "La solicitud debería actualizarse al estado 'En Proceso' después de reabrirla.");
 		assertEquals(true, esReabierta, "La Solicitud debería ser reabierta.");
 	}
 
@@ -141,7 +141,7 @@ class SolicitudTests {
 		
 		solicitud.procesarSolicitud(); // EN_PROCESO
 		solicitud.cerrarSolicitud();   // CERRADA
-		solicitud.reabrir();           // EN_PROCESO
+		solicitud.reabrir();           // ABIERTA
 		
 		java.util.List<EstadoHistorico> historico = solicitud.getHistoricoEstados();
 		
@@ -149,6 +149,6 @@ class SolicitudTests {
 		assertEquals(EstadoSolicitud.ABIERTA, historico.get(0).getEstado());
 		assertEquals(EstadoSolicitud.EN_PROCESO, historico.get(1).getEstado());
 		assertEquals(EstadoSolicitud.CERRADA, historico.get(2).getEstado());
-		assertEquals(EstadoSolicitud.EN_PROCESO, historico.get(3).getEstado());
+		assertEquals(EstadoSolicitud.ABIERTA, historico.get(3).getEstado());
 	}
 }
