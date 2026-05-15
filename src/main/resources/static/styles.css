@@ -11,10 +11,10 @@
     --footer-bg: #0f172a;
 }
 
-/* === LAYOUT PARA FOOTER FIJO ABAJO === */
+/* === LAYOUT BASE Y FOOTER FIJO === */
 html, body { height: 100%; margin: 0; }
 body {
-    display: flex; flex-direction: column;
+    display: flex; flex-direction: column; padding-top: 60px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--bg); color: var(--text);
 }
@@ -28,40 +28,74 @@ body {
 
 header { border-bottom: 2px solid var(--border); margin-bottom: 20px; padding-bottom: 10px; }
 
+/* === NAVBAR === */
+.navbar {
+    position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+    background-color: var(--footer-bg); color: white;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 40px; box-sizing: border-box; z-index: 100;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.nav-brand { font-size: 20px; font-weight: bold; letter-spacing: 1px; }
+.nav-links { display: flex; gap: 10px; }
+.nav-btn {
+    background: transparent; border: none; color: #cbd5e1;
+    font-size: 15px; cursor: pointer; padding: 8px 15px;
+    border-radius: 6px; transition: 0.2s;
+}
+.nav-btn:hover { background-color: #1e293b; color: white; }
+.nav-btn.active { background-color: var(--primary); color: white; font-weight: bold; }
+
+/* === BOTONES Y FORMULARIOS === */
 .actions-bar { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
 
 button { padding: 10px 16px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .btn-primary { background-color: var(--primary); color: white; }
 .btn-primary:hover { background-color: var(--primary-hover); }
+.btn-primary:disabled { background-color: #94a3b8; cursor: not-allowed; }
 
 .btn-action { font-size: 12px; padding: 6px 10px; margin-right: 4px; border: 1px solid var(--border); background: white; }
 .btn-action:hover { background: #f1f5f9; }
 
-/* Botón especial Ver Detalles */
 .btn-detalle { border-color: var(--primary); color: var(--primary); background-color: #eff6ff; font-weight: bold; }
 .btn-detalle:hover { background-color: var(--primary); color: white; }
 
-/* Contenedor flexible para separar los botones en la tabla */
-.td-acciones { display: flex; justify-content: space-between; align-items: center; }
-.grupo-acciones { display: flex; gap: 2px; }
+.input-form {
+    padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 14px; outline: none; transition: border-color 0.2s; box-sizing: border-box;
+}
+.input-form:focus { border-color: var(--primary); }
 
-/* PANEL DE CREACIÓN DESPLEGABLE */
+.input-textarea {
+    width: 100%; height: 80px; padding: 10px; border: 1px solid var(--border);
+    border-radius: 6px; font-size: 14px; font-family: inherit; resize: vertical;
+    box-sizing: border-box; margin-bottom: 10px; outline: none;
+}
+.input-textarea:focus { border-color: var(--primary); }
+
+/* Nuevo: Estilo cuando la descripción está bloqueada (Procesar) */
+.input-textarea[readonly] {
+    background-color: #f1f5f9;
+    color: #64748b;
+    cursor: not-allowed;
+}
+.input-textarea[readonly]:focus { border-color: var(--border); }
+
+/* === PANELES DESPLEGABLES === */
 .panel-creacion {
     background-color: #f8fafc; border: 1px solid var(--border); border-radius: 8px;
     padding: 20px; margin-bottom: 20px; transition: all 0.3s ease;
 }
 .panel-creacion h3 { margin-top: 0; font-size: 16px; color: var(--primary); }
-.input-textarea {
-    width: 100%; height: 80px; padding: 10px; border: 1px solid var(--border);
-    border-radius: 6px; font-size: 14px; font-family: inherit; resize: vertical;
-    box-sizing: border-box; margin-bottom: 10px;
-}
 .panel-actions { text-align: right; }
 
 /* === TABLA Y ACORDEÓN === */
 table { width: 100%; border-collapse: collapse; }
 th { text-align: left; background: #f1f5f9; padding: 12px; font-size: 14px; color: #64748b; }
 td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+
+.td-acciones { display: flex; justify-content: space-between; align-items: center; }
+.grupo-acciones { display: flex; gap: 2px; }
 
 .desc-row { display: none; }
 .desc-row.open { display: table-row; }
@@ -71,6 +105,7 @@ td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
 
+/* === ETIQUETAS Y NOTIFICACIONES === */
 .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
 .badge-abierta { background: #dcfce7; color: #166534; }
 .badge-enproceso { background: #fef9c3; color: #854d0e; }
@@ -81,9 +116,7 @@ td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
 .exito { background-color: #dcfce7; color: #166534; border: 1px solid #4ade80; }
 .hidden { display: none; }
 
-#btnCrear span { font-size: 18px; color: white; }
-
-/* === FOOTER OSCURO PROFESIONAL === */
+/* === FOOTER === */
 .footer-dark { flex-shrink: 0; background-color: var(--footer-bg); color: #cbd5e1; padding: 40px 20px 20px 20px; }
 .footer-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; border-bottom: 1px solid #334155; padding-bottom: 30px; }
 .footer-col h4 { color: white; margin-top: 0; margin-bottom: 15px; font-size: 16px; }
