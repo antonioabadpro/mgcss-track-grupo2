@@ -15,8 +15,17 @@
     </header>
 
     <div class="actions-bar">
-        <button id="btnCrear" class="btn-primary" onclick="crearSolicitud()"><span>+</span> Nueva Solicitud</button>
+        <button id="btnCrear" class="btn-primary" onclick="togglePanelCreacion()"><span>+</span> Nueva Solicitud</button>
         <button id="btnRefrescar" onclick="cargarSolicitudes()">🔄 Actualizar Lista</button>
+    </div>
+
+    <div id="panelCreacion" class="panel-creacion hidden">
+        <h3>📝 Registrar Nueva Avería</h3>
+        <textarea id="inputDescripcion" placeholder="Describe el problema en detalle (ej. El proyector del aula PQ 1.2 no funciona)..." class="input-textarea"></textarea>
+        <div class="panel-actions">
+            <button class="btn-action" onclick="togglePanelCreacion()">Cancelar</button>
+            <button class="btn-primary" onclick="crearSolicitud()">Guardar Solicitud</button>
+        </div>
     </div>
 
     <div id="notificacion" class="notificacion hidden"></div>
@@ -33,11 +42,38 @@
                 </tr>
             </thead>
             <tbody id="tablaSolicitudes">
-                
-            </tbody>
+                </tbody>
         </table>
     </div>
 </div>
+
+<footer class="footer-dark">
+    <div class="footer-grid">
+        <div class="footer-col">
+            <h4>Sobre Nosotros</h4>
+            <p>Proyecto de desarrollo para la gestión y mantenimiento de un Servicio de Asistencia Técnica (SAT).</p>
+        </div>
+        <div class="footer-col">
+            <h4>Institución</h4>
+            <ul>
+                <li>Universidad de Huelva (UHU)</li>
+                <li>ETSI (Escuela Técnica Superior de Ingeniería)</li>
+                <li>Asignatura: MGCSS</li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Integrantes del Grupo</h4>
+            <p>
+                Antonio Abad Hernández Gálvez<br>
+                Javier León Castañeda<br>
+                Daniel Marchena Jiménez
+            </p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 MGCSS Track Grupo 2. Todos los derechos reservados.</p>
+    </div>
+</footer>
 
 <script src="javascript.js"></script>
 </body>

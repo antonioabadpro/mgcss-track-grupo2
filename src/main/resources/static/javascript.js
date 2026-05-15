@@ -1,11 +1,25 @@
 const API_BASE = 'http://localhost:8080/api/solicitudes';
 
-// Función para mostrar mensajes de éxito o error
 function avisar(mensaje, tipo) {
     const el = document.getElementById('notificacion');
     el.innerText = mensaje;
     el.className = `notificacion ${tipo}`;
     setTimeout(() => el.className = 'notificacion hidden', 5000);
+}
+
+// Abrir/Cerrar el panel superior de creación
+function togglePanelCreacion() {
+    const panel = document.getElementById('panelCreacion');
+    panel.classList.toggle('hidden');
+    if (!panel.classList.contains('hidden')) {
+        document.getElementById('inputDescripcion').focus();
+    }
+}
+
+// Abrir/Cerrar la fila de descripción en la tabla
+function toggleDescripcion(id) {
+    const filaDesc = document.getElementById(`desc-${id}`);
+    filaDesc.classList.toggle('open');
 }
 
 // Cargar lista (GET)
@@ -25,14 +39,31 @@ async function cargarSolicitudes() {
                 <td><span class="badge badge-${s.estado.toLowerCase().replace('_','')}">${s.estado}</span></td>
                 <td>${s.fechaCreacion || '-'}</td>
                 <td>${s.tecnicoId ? '👤 ' + s.tecnicoId : '❌ Sin asignar'}</td>
-                <td>
-                    <button class="btn-action" onclick="asignarTecnico(${s.id})">Asignar</button>
-                    <button class="btn-action" onclick="actualizarEstado(${s.id}, 'EN_PROCESO')">Procesar</button>
-                    <button class="btn-action" onclick="actualizarEstado(${s.id}, 'CERRADA')">Cerrar</button>
-                    <button class="btn-action" onclick="reabrir(${s.id})">Reabrir</button>
+                
+                <td class="td-acciones">
+                    <div class="grupo-acciones">
+                        <button class="btn-action" onclick="asignarTecnico(${s.id})">Asignar</button>
+                        <button class="btn-action" onclick="actualizarEstado(${s.id}, 'EN_PROCESO')">Procesar</button>
+                        <button class="btn-action" onclick="actualizarEstado(${s.id}, 'CERRADA')">Cerrar</button>
+                        <button class="btn-action" onclick="reabrir(${s.id})">Reabrir</button>
+                    </div>
+                    <button class="btn-action btn-detalle" onclick="toggleDescripcion(${s.id})">👁️ Ver Detalle</button>
                 </td>
             `;
             tbody.appendChild(tr);
+
+            // Fila oculta de descripción (Acordeón)
+            const trDesc = document.createElement('tr');
+            trDesc.id = `desc-${s.id}`;
+            trDesc.className = 'desc-row';
+            const textoDesc = s.descripcion ? s.descripcion : '<i>No se ha proporcionado descripción para esta avería.</i>';
+            trDesc.innerHTML = `
+                <td colspan="5" class="desc-cell">
+                    <strong>📄 Descripción del problema:</strong><br><br>
+                    ${textoDesc}
+                </td>
+            `;
+            tbody.appendChild(trDesc);
         });
     } catch (err) {
         avisar("Error: No hay conexión con el servidor.", "error");
@@ -41,13 +72,27 @@ async function cargarSolicitudes() {
 
 // Crear (POST)
 async function crearSolicitud() {
+    const inputDesc = document.getElementById('inputDescripcion');
+    const textoDescripcion = inputDesc.value.trim();
+    
+    const bodyRequest = textoDescripcion ? { descripcion: textoDescripcion } : {};
+
     try {
-        const res = await fetch(API_BASE, { method: 'POST' });
+        const res = await fetch(API_BASE, { 
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(bodyRequest)
+        });
+        
         if (res.ok) {
             avisar("Solicitud creada con éxito", "exito");
+            inputDesc.value = ''; 
+            togglePanelCreacion(); // Ocultamos el panel tras crear
             cargarSolicitudes();
         }
-    } catch (err) { avisar("Error al crear", "error"); }
+    } catch (err) {
+        avisar("Error al crear", "error");
+    }
 }
 
 // Asignar Técnico (POST)
@@ -70,7 +115,7 @@ async function asignarTecnico(id) {
     } catch (err) { avisar("Error de conexión", "error"); }
 }
 
-// Cambiar Estado (PUT) - Aquí el backend aplica las REGLAS DE NEGOCIO
+// Cambiar Estado (PUT)
 async function actualizarEstado(id, nuevoEstado) {
     try {
         const res = await fetch(`${API_BASE}/${id}/estado`, {
@@ -83,7 +128,6 @@ async function actualizarEstado(id, nuevoEstado) {
             avisar(`Estado de #${id} cambiado a ${nuevoEstado}`, "exito");
             cargarSolicitudes();
         } else {
-            // Este mensaje sale si el dominio rechaza el cambio (Regla de negocio)
             avisar(`Regla de Negocio: No se puede pasar a ${nuevoEstado} desde el estado actual.`, "error");
         }
     } catch (err) { avisar("Error de red", "error"); }
@@ -102,5 +146,4 @@ async function reabrir(id) {
     } catch (err) { avisar("Error de red", "error"); }
 }
 
-// Inicio automático
 document.addEventListener('DOMContentLoaded', cargarSolicitudes);

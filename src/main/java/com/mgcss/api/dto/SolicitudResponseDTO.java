@@ -25,6 +25,8 @@ public class SolicitudResponseDTO {
     private EstadoSolicitud estado;
     @Schema(description = "Fecha de creación de la solicitud", example = "11/05/2026 10:00:00")
     private String fechaCreacion;
+    @Schema(description = "Descripción del problema", example = "El equipo del profesor del aula IM 1.8 no enciende")
+    private String descripcion;
     @Schema(description = "ID del técnico asignado a la solicitud", example = "10")
     private Long tecnicoId;
     @Schema(description = "Lista que contiene el histórico de estados que ha tenido la solicitud")
