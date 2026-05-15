@@ -41,7 +41,7 @@ class TecnicoControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.nombre").value("Paco García"))
-                .andExpect(jsonPath("$.activo").value(true));
+                .andExpect(jsonPath("$.esActivo").value(true));
     }
 
     @Test
@@ -67,6 +67,7 @@ class TecnicoControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].nombre").value("Ana Gómez"))
+                .andExpect(jsonPath("$[0].esActivo").value(true))
                 .andExpect(jsonPath("$[0].id").value(1L));
     }
 }
