@@ -47,6 +47,12 @@ public class Solicitud {
     private String fechaCreacion;
 
     /**
+     * Descripción de la solicitud
+     */
+    @Column(length = 500)
+    private String descripcion;
+
+    /**
      * Técnico asignado a la solicitud
      */
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
@@ -102,7 +108,61 @@ public class Solicitud {
                 .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         this.tecnico = null;
         registrarCambioEstado(this.estado);
+        this.descripcion=null;
     }
+
+    /**
+     * Procesa la solicitud
+     * 
+     * @return true si la solicitud se procesó correctamente, false en caso
+     *         contrario
+     */
+    public boolean procesarSolicitud() {
+        if (puedeSerProcesada()) {
+            this.estado = EstadoSolicitud.EN_PROCESO;
+            registrarCambioEstado(this.estado);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Cierra la solicitud
+     * 
+     * @return true si la solicitud se cerró correctamente, false en caso contrario
+     */
+    public boolean cerrarSolicitud() {
+        if (puedeSerCerrada()) {
+            this.estado = EstadoSolicitud.CERRADA;
+            registrarCambioEstado(this.estado);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Reabre la solicitud
+     * 
+     * @return true si la solicitud se reabrió correctamente, false en caso
+     *         contrario
+     */
+    public boolean reabrir() {
+        if (this.estado == EstadoSolicitud.CERRADA) {
+            this.estado = EstadoSolicitud.EN_PROCESO;
+            registrarCambioEstado(this.estado);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Registra un cambio en el histórico de la solicitud
+     */
+    private void registrarCambioEstado(EstadoSolicitud nuevoEstado) {
+        this.historicoEstados.add(new EstadoHistorico(nuevoEstado, LocalDateTime.now()));
+    }
+
+    // ************************ GETTERS y SETTERS ************************
 
     /**
      * Obtiene el id de la solicitud
@@ -184,7 +244,6 @@ public class Solicitud {
 
     /**
      * Establece el técnico asignado a la solicitud
-     * 
      * @param tecnico Técnico asignado a la solicitud
      * @return true si el técnico se estableció correctamente, false en caso
      *         contrario
@@ -198,53 +257,18 @@ public class Solicitud {
     }
 
     /**
-     * Procesa la solicitud
-     * 
-     * @return true si la solicitud se procesó correctamente, false en caso
-     *         contrario
+     * Obtiene la descripción de la solicitud
+     * @return Descripción de la solicitud
      */
-    public boolean procesarSolicitud() {
-        if (puedeSerProcesada()) {
-            this.estado = EstadoSolicitud.EN_PROCESO;
-            registrarCambioEstado(this.estado);
-            return true;
-        }
-        return false;
+    public String getDescripcion() {
+        return descripcion;
     }
 
     /**
-     * Cierra la solicitud
-     * 
-     * @return true si la solicitud se cerró correctamente, false en caso contrario
+     * Establece la descripción de la solicitud
+     * @param descripcion Descripción de la solicitud
      */
-    public boolean cerrarSolicitud() {
-        if (puedeSerCerrada()) {
-            this.estado = EstadoSolicitud.CERRADA;
-            registrarCambioEstado(this.estado);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Reabre la solicitud
-     * 
-     * @return true si la solicitud se reabrió correctamente, false en caso
-     *         contrario
-     */
-    public boolean reabrir() {
-        if (this.estado == EstadoSolicitud.CERRADA) {
-            this.estado = EstadoSolicitud.EN_PROCESO;
-            registrarCambioEstado(this.estado);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Registra un cambio en el histórico de la solicitud
-     */
-    private void registrarCambioEstado(EstadoSolicitud nuevoEstado) {
-        this.historicoEstados.add(new EstadoHistorico(nuevoEstado, LocalDateTime.now()));
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 }

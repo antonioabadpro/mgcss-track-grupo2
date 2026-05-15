@@ -46,6 +46,7 @@ public class SolicitudController {
                 .id(solicitud.getId())
                 .estado(solicitud.getEstado())
                 .fechaCreacion(solicitud.getFechaCreacion())
+                .descripcion(solicitud.getDescripcion())
                 .tecnicoId(solicitud.getTecnico() != null ? solicitud.getTecnico().getId() : null)
                 .historicoEstados(historicoDTOs)
                 .build();
