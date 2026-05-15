@@ -77,7 +77,7 @@ public class TecnicoController {
     /**
      * @return ResponseEntity con código 200 si el estado se modificó correctamente, o error 404 si el técnico no existe.
      */
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/toggle-estado")
     @Operation(summary = "Cambiar estado del técnico", description = "Alterna el estado del técnico (de activo a inactivo y viceversa).")
     @ApiResponse(responseCode = "200", description = "Estado modificado correctamente.")
     public ResponseEntity<Void> alternarEstadoTecnico(@PathVariable Long id) {
@@ -94,5 +94,6 @@ public class TecnicoController {
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

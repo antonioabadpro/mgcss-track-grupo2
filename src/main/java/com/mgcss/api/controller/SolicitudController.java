@@ -3,6 +3,7 @@ package com.mgcss.api.controller;
 import com.mgcss.api.dto.EstadoHistoricoDTO;
 import com.mgcss.api.dto.SolicitudRequestDTO;
 import com.mgcss.api.dto.SolicitudResponseDTO;
+import com.mgcss.domain.EstadoSolicitud;
 import com.mgcss.domain.Solicitud;
 import com.mgcss.domain.Tecnico;
 import com.mgcss.infraestructure.repository.TecnicoRepository;
@@ -61,15 +62,25 @@ public class SolicitudController {
      * Endpoint para crear una solicitud.
      */
     @PostMapping
-    @Operation(summary = "Crear solicitud", description = "Crea una nueva solicitud vacía con estado ABIERTA.")
+    @Operation(summary = "Crear solicitud", description = "Crea una nueva solicitud vacía con estado ABIERTA. Si se incluye un idTecnico en el JSON, se asignará dicho técnico a la solicitud.")
     @ApiResponse(responseCode = "201", description = "Solicitud creada con éxito.")
     @ApiResponse(responseCode = "400", description = "Error al crear la solicitud.")
     public ResponseEntity<SolicitudResponseDTO> crearSolicitud(@RequestBody(required = false) SolicitudRequestDTO requestDTO) {
         Solicitud solicitud = new Solicitud();
         
-        // Si nos envían una descripción en el JSON, se la asignamos
-        if (requestDTO != null && requestDTO.getDescripcion() != null) {
-            solicitud.setDescripcion(requestDTO.getDescripcion());
+        if (requestDTO != null) {
+            // Si en el DTO viene la descripcion, se la asignamos a la solicitud
+            if (requestDTO.getDescripcion() != null) {
+                solicitud.setDescripcion(requestDTO.getDescripcion());
+            }
+            
+            // Si el el DTO viene el id del Tecnico, se lo asignamos a la solicitud y cambiamos el estado a EN_PROCESO
+            if (requestDTO.getTecnicoId() != null) {
+                Tecnico tecnico = tecnicoRepository.findById(requestDTO.getTecnicoId())
+                        .orElseThrow(() -> new IllegalArgumentException("El técnico no existe"));
+                solicitud.setTecnico(tecnico);
+                solicitud.setEstado(EstadoSolicitud.EN_PROCESO);
+            }
         }
         
         Solicitud creada = solicitudService.crearSolicitud(solicitud);

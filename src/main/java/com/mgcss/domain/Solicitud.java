@@ -141,14 +141,13 @@ public class Solicitud {
     }
 
     /**
-     * Reabre la solicitud
-     * 
-     * @return true si la solicitud se reabrió correctamente, false en caso
-     *         contrario
+     * Reabre la solicitud, pasándola a estado ABIERTA y desasignando el técnico
+     * @return true si la solicitud se reabrió correctamente, false en caso contrario
      */
     public boolean reabrir() {
         if (this.estado == EstadoSolicitud.CERRADA) {
-            this.estado = EstadoSolicitud.EN_PROCESO;
+            this.estado = EstadoSolicitud.ABIERTA;
+            this.tecnico = null; // Al reabrir la solicitud, se desasigna el técnico
             registrarCambioEstado(this.estado);
             return true;
         }

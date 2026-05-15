@@ -3,47 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MGCSS - Panel de Solicitudes</title>
+    <title>MGCSS - Panel de Control</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
+<nav class="navbar">
+    <div class="nav-brand">MGCSS SAT</div>
+    <div class="nav-links">
+        <button id="navSolicitudes" class="nav-btn active" onclick="switchView('solicitudes')">📋 Gestión de Solicitudes</button>
+        <button id="navTecnicos" class="nav-btn" onclick="switchView('tecnicos')">👨‍🔧 Gestión de Técnicos</button>
+    </div>
+</nav>
+
 <div class="container">
     <header>
-        <h1>MGCSS - Gestión de Servicio Técnico</h1>
-        <p>Control de solicitudes de un Servicio Técnico en tiempo real</p>
+        <h1 id="headerTitulo">MGCSS - Gestión de Servicio Técnico</h1>
+        <p id="headerSubtitulo">Control de solicitudes de un Servicio Técnico en tiempo real</p>
     </header>
-
-    <div class="actions-bar">
-        <button id="btnCrear" class="btn-primary" onclick="togglePanelCreacion()"><span>+</span> Nueva Solicitud</button>
-        <button id="btnRefrescar" onclick="cargarSolicitudes()">🔄 Actualizar Lista</button>
-    </div>
-
-    <div id="panelCreacion" class="panel-creacion hidden">
-        <h3>📝 Registrar Nueva Avería</h3>
-        <textarea id="inputDescripcion" placeholder="Describe el problema en detalle (ej. El proyector del aula PQ 1.2 no funciona)..." class="input-textarea"></textarea>
-        <div class="panel-actions">
-            <button class="btn-action" onclick="togglePanelCreacion()">Cancelar</button>
-            <button class="btn-primary" onclick="crearSolicitud()">Guardar Solicitud</button>
-        </div>
-    </div>
 
     <div id="notificacion" class="notificacion hidden"></div>
 
-    <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Estado</th>
-                    <th>Fecha Creación</th>
-                    <th>Técnico</th>
-                    <th>Acciones de Gestión</th>
-                </tr>
-            </thead>
-            <tbody id="tablaSolicitudes">
-                </tbody>
-        </table>
+    <div id="viewSolicitudes">
+        <div class="actions-bar">
+            <button id="btnCrearSol" class="btn-primary" onclick="abrirPanelCrear()"><span>+</span> Nueva Solicitud</button>
+            <button class="btn-action" onclick="cargarDatos()">🔄 Actualizar Lista</button>
+        </div>
+
+        <div id="panelCreacionSol" class="panel-creacion hidden">
+            <h3 id="tituloPanelSol">📝 Registrar Nueva Avería</h3>
+            
+            <label style="font-weight: bold; font-size: 14px;">Descripción del problema:</label>
+            <textarea id="inputDescripcion" placeholder="Describe el problema en detalle (ej. El proyector del aula PQ 1.2 no funciona)..." class="input-textarea"></textarea>
+            
+            <div style="margin-top: 10px; margin-bottom: 15px;">
+                <label for="selectTecnicoCreacion" style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Asignar Técnico Responsable:</label>
+                <select id="selectTecnicoCreacion" class="input-form" style="width: 100%;">
+                    </select>
+                <p id="msgAvisoTecnicos" class="error hidden" style="margin-top: 5px; font-size: 12px; font-weight: bold;">
+                    ⚠️ No hay técnicos activos. Debes crear/activar un técnico en la pestaña correspondiente.
+                </p>
+            </div>
+
+            <div class="panel-actions">
+                <button class="btn-action" onclick="cerrarPanelSol()">Cancelar</button>
+                <button id="btnGuardarSolicitud" class="btn-primary" onclick="ejecutarAccionPanelSol()">Guardar Solicitud</button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Estado</th>
+                        <th>Fecha Creación</th>
+                        <th>Técnico</th>
+                        <th style="text-align: right;">Acciones de Gestión</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaSolicitudes"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="viewTecnicos" class="hidden">
+        <div class="actions-bar">
+            <button class="btn-primary" style="background-color: #10b981;" onclick="togglePanelCreacionTec()"><span>+</span> Nuevo Técnico</button>
+            <button class="btn-action" onclick="cargarDatos()">🔄 Actualizar Lista</button>
+        </div>
+
+        <div id="panelCreacionTec" class="panel-creacion hidden">
+            <h3 style="color: #10b981;">👨‍🔧 Alta de Nuevo Técnico</h3>
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <input type="text" id="inputNombreTecnico" placeholder="Nombre completo" class="input-form">
+                <input type="number" id="inputEdadTecnico" placeholder="Edad" class="input-form" style="width: 100px;">
+            </div>
+            <div class="panel-actions">
+                <button class="btn-action" onclick="togglePanelCreacionTec()">Cancelar</button>
+                <button class="btn-primary" style="background-color: #10b981;" onclick="crearTecnico()">Registrar Técnico</button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre del Técnico</th>
+                        <th>Edad</th>
+                        <th>Estado Actual</th>
+                        <th style="text-align: right;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaTecnicos"></tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -57,13 +112,13 @@
             <h4>Institución</h4>
             <ul>
                 <li>Universidad de Huelva (UHU)</li>
-                <li>ETSI (Escuela Técnica Superior de Ingeniería)</li>
-                <li>Asignatura: MGCSS</li>
+                <li>Escuela Técnica Superior de Ingeniería (ETSI)</li>
+                <li>Asignatura: MGCSS (Mantenimiento y Gestión de la Calidad en Sistemas Software)</li>
             </ul>
         </div>
         <div class="footer-col">
-            <h4>Integrantes del Grupo</h4>
-            <p>
+            <h4 style="text-align: right;">Desarrolladores de la Aplicación</h4>
+            <p style="text-align: right;">
                 Antonio Abad Hernández Gálvez<br>
                 Javier León Castañeda<br>
                 Daniel Marchena Jiménez
