@@ -25,7 +25,7 @@ class SolicitudResponseDTOTest {
     @Test
     void testAllArgsConstructorAndGetters() {
         List<EstadoHistoricoDTO> historico = Collections.singletonList(new EstadoHistoricoDTO());
-        SolicitudResponseDTO dto = new SolicitudResponseDTO(1L, EstadoSolicitud.ABIERTA, "12/12/2023", "Problema con el proyector en el aula PQ 1.2", 2L, null);
+        SolicitudResponseDTO dto = new SolicitudResponseDTO(1L, EstadoSolicitud.ABIERTA, "12/12/2023", "Problema con el proyector en el aula PQ 1.2", 2L, historico);
         
         assertEquals(1L, dto.getId());
         assertEquals(EstadoSolicitud.ABIERTA, dto.getEstado());

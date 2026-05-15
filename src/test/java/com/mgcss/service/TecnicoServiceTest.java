@@ -63,12 +63,11 @@ class TecnicoServiceTest {
     void cambiarEstadoTecnico() {
         Tecnico tecnico = new Tecnico("Paco López", 30);
         tecnico.setId(1L);
-        when(tecnicoRepository.findById(1L)).thenReturn(java.util.Optional.of(tecnico));
+        tecnico.setTecnicoActivo();
 
         tecnicoService.cambiarEstado(tecnico, false);
 
         assertFalse(tecnico.isTecnicoActivo(), "El técnico debe estar inactivo después de cambiar su estado");
-        verify(tecnicoRepository).findById(1L);
         verify(tecnicoRepository).save(tecnico);
     }
 
