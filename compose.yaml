@@ -4,5 +4,8 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
+    environment:
+      - PORT=3000
+      - SPRING_PROFILES_ACTIVE=dev
     ports:
       - 3000:3000
