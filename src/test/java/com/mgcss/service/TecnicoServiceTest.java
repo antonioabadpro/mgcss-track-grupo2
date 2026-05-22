@@ -57,10 +57,10 @@ class TecnicoServiceTest {
     }
 
     /**
-     * Este test verifica que el estado de un técnico se pueda cambiar correctamente, tanto de activo a inactivo como de inactivo a activo.
+     * Este test verifica que el estado de un técnico se pueda cambiar correctamente de activo a inactivo.
      */
     @Test
-    void cambiarEstadoTecnico() {
+    void cambiarEstadoTecnico_ActivoAInactivo() {
         Tecnico tecnico = new Tecnico("Paco López", 30);
         tecnico.setId(1L);
         tecnico.setTecnicoActivo();
@@ -70,6 +70,52 @@ class TecnicoServiceTest {
         assertFalse(tecnico.isTecnicoActivo(), "El técnico debe estar inactivo después de cambiar su estado");
         verify(tecnicoRepository).save(tecnico);
     }
+
+    /**
+     * Este test verifica que el estado de un técnico se pueda cambiar correctamente de inactivo a activo.
+     */
+    @Test
+    void cambiarEstadoTecnico_InactivoAActivo() {
+        Tecnico tecnico = new Tecnico("Paco López", 30);
+        tecnico.setId(1L);
+        tecnico.setTecnicoInactivo();
+
+        tecnicoService.cambiarEstado(tecnico, true);
+
+        assertTrue(tecnico.isTecnicoActivo(), "El técnico debe estar activo después de cambiar su estado");
+        verify(tecnicoRepository).save(tecnico);
+    }
+
+    /**
+     * Este test verifica que si cambiamos el estado de un técnico activo a activo, no cambie su estado y se llame al repositorio.
+     */
+    @Test
+    void cambiarEstadoTecnico_ActivoAActivo() {
+        Tecnico tecnico = new Tecnico("Paco López", 30);
+        tecnico.setId(1L);
+        tecnico.setTecnicoActivo();
+
+        tecnicoService.cambiarEstado(tecnico, true);
+
+        assertTrue(tecnico.isTecnicoActivo(), "El técnico debe seguir estando activo");
+        verify(tecnicoRepository).save(tecnico);
+    }
+
+    /**
+     * Este test verifica que si cambiamos el estado de un técnico inactivo a inactivo, no cambie su estado y se llame al repositorio.
+     */
+    @Test
+    void cambiarEstadoTecnico_InactivoAInactivo() {
+        Tecnico tecnico = new Tecnico("Paco López", 30);
+        tecnico.setId(1L);
+        tecnico.setTecnicoInactivo();
+
+        tecnicoService.cambiarEstado(tecnico, false);
+
+        assertFalse(tecnico.isTecnicoActivo(), "El técnico debe seguir estando inactivo");
+        verify(tecnicoRepository).save(tecnico);
+    }
+
 
     /**
      * Este test verifica que se pueda consultar un técnico por su ID y que se retorne el técnico correcto. También verifica que se lance una excepción si el técnico no existe.

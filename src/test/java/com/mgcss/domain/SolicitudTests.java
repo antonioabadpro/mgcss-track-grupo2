@@ -151,4 +151,30 @@ class SolicitudTests {
 		assertEquals(EstadoSolicitud.CERRADA, historico.get(2).getEstado());
 		assertEquals(EstadoSolicitud.ABIERTA, historico.get(3).getEstado());
 	}
+
+	/**
+	 * Este test verifica que no se pueda reabrir una solicitud que no está en estado CERRADA.
+	 */
+	@Test
+	void testReabrirSolicitudNoCerrada() {
+		Solicitud solicitud = new Solicitud();
+		solicitud.setEstado(EstadoSolicitud.EN_PROCESO);
+		
+		boolean esReabierta = solicitud.reabrir();
+		
+		assertEquals(EstadoSolicitud.EN_PROCESO, solicitud.getEstado(), "El estado no debería cambiar.");
+		assertEquals(false, esReabierta, "reabrir() debería retornar false para solicitudes no cerradas.");
+	}
+
+	/**
+	 * Este test verifica que se pueda establecer y obtener la descripción de la solicitud.
+	 */
+	@Test
+	void testSetYGetDescripcion() {
+		Solicitud solicitud = new Solicitud();
+		String desc = "Pantalla rota de ordenador portátil.";
+		solicitud.setDescripcion(desc);
+		
+		assertEquals(desc, solicitud.getDescripcion(), "La descripción debería coincidir.");
+	}
 }
