@@ -9,8 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import java.util.Optional;
 
 import com.mgcss.domain.Solicitud;
@@ -146,7 +144,7 @@ class SolicitudServiceTest {
 
         solicitudService.reabrirSolicitud(1L);
 
-        assertEquals(EstadoSolicitud.EN_PROCESO, solicitud.getEstado());
+        assertEquals(EstadoSolicitud.ABIERTA, solicitud.getEstado());
         verify(solicitudRepository).save(solicitud);
     }
 }

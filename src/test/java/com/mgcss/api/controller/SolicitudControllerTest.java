@@ -203,4 +203,58 @@ class SolicitudControllerTest {
         mockMvc.perform(get("/api/solicitudes/99"))
                 .andExpect(status().isNotFound());
     }
+
+    /**
+     * Este test verifica que se pueda crear una solicitud especificando una descripción.
+     */
+    @Test
+    void testCrearSolicitud_ConDescripcion() throws Exception {
+        when(solicitudService.crearSolicitud(any(Solicitud.class))).thenAnswer(invocation -> {
+            Solicitud input = invocation.getArgument(0);
+            input.setId(1L);
+            return input;
+        });
+
+        mockMvc.perform(post("/api/solicitudes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"descripcion\": \"Ordenador no enciende\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.descripcion").value("Ordenador no enciende"));
+    }
+
+    /**
+     * Este test verifica que se pueda crear una solicitud asignando directamente un técnico existente y válido.
+     */
+    @Test
+    void testCrearSolicitud_ConTecnicoValido() throws Exception {
+        tecnicoDummy.setTecnicoActivo();
+        when(tecnicoRepository.findById(10L)).thenReturn(Optional.of(tecnicoDummy));
+        when(solicitudService.crearSolicitud(any(Solicitud.class))).thenAnswer(invocation -> {
+            Solicitud input = invocation.getArgument(0);
+            input.setId(1L);
+            return input;
+        });
+
+        mockMvc.perform(post("/api/solicitudes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"tecnicoId\": 10}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.tecnicoId").value(10L))
+                .andExpect(jsonPath("$.estado").value("EN_PROCESO"));
+    }
+
+    /**
+     * Este test verifica que al intentar crear una solicitud asignando un técnico inexistente, devuelva 400 Bad Request.
+     */
+    @Test
+    void testCrearSolicitud_ConTecnicoInexistente() throws Exception {
+        when(tecnicoRepository.findById(99L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/api/solicitudes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"tecnicoId\": 99}"))
+                .andExpect(status().isBadRequest());
+    }
 }

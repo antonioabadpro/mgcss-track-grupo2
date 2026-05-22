@@ -1,0 +1,13 @@
+services:
+  mgcsstrackgrupo2:
+    image: mgcsstrackgrupo2
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005,quiet=y
+      PORT: 3000
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - 3000:3000
+      - 5005:5005
