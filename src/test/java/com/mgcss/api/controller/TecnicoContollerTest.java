@@ -70,4 +70,16 @@ class TecnicoControllerTest {
                 .andExpect(jsonPath("$[0].esActivo").value(true))
                 .andExpect(jsonPath("$[0].id").value(1L));
     }
+
+    @Test
+    void testAlternarEstadoTecnico_Exitoso() throws Exception {
+        Tecnico tecnico = new Tecnico("Paco García", 30);
+        tecnico.setId(1L);
+        tecnico.setTecnicoActivo();
+
+        when(tecnicoService.consultarTecnico(1L)).thenReturn(tecnico);
+
+        mockMvc.perform(patch("/api/tecnicos/1/toggle-estado"))
+                .andExpect(status().isOk());
+    }
 }
