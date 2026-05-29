@@ -60,6 +60,19 @@ public class Solicitud {
     private Tecnico tecnico;
 
     /**
+     * Cliente de la solicitud
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private Cliente cliente;
+
+    /**
+     * Fecha de cierre de la solicitud
+     */
+    @Column(length = 10)
+    private String fechaCierre;
+
+    /**
      * Historial de estados de la solicitud
      */
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -134,6 +147,7 @@ public class Solicitud {
     public boolean cerrarSolicitud() {
         if (puedeSerCerrada()) {
             this.estado = EstadoSolicitud.CERRADA;
+            this.fechaCierre = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             registrarCambioEstado(this.estado);
             return true;
         }
@@ -148,6 +162,7 @@ public class Solicitud {
         if (this.estado == EstadoSolicitud.CERRADA) {
             this.estado = EstadoSolicitud.ABIERTA;
             this.tecnico = null; // Al reabrir la solicitud, se desasigna el técnico
+            this.fechaCierre = null;
             registrarCambioEstado(this.estado);
             return true;
         }
@@ -269,5 +284,21 @@ public class Solicitud {
      */
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public String getFechaCierre() {
+        return fechaCierre;
+    }
+
+    public void setFechaCierre(String fechaCierre) {
+        this.fechaCierre = fechaCierre;
     }
 }

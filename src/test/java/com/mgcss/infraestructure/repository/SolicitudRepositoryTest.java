@@ -3,6 +3,9 @@ package com.mgcss.infraestructure.repository;
 import com.mgcss.domain.EstadoHistorico;
 import com.mgcss.domain.EstadoSolicitud;
 import com.mgcss.domain.Solicitud;
+import com.mgcss.domain.Cliente;
+import com.mgcss.domain.TipoCliente;
+import com.mgcss.infraestructura.repository.ClienteRepository;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,13 +26,21 @@ class SolicitudRepositoryTest {
     @Autowired
     private SolicitudRepository solicitudRepository;
 
+    @Autowired
+    private ClienteRepository clienteRepository;
+
     /**
      * Este test verifica que una solicitud pueda ser guardada y recuperada correctamente de la base de datos.
      */
     @Test
     void testGuardarYRecuperarSolicitud() {
+        // Crear cliente
+        Cliente cliente = new Cliente("Test User", "test@example.com", TipoCliente.STANDARD);
+        cliente = clienteRepository.save(cliente);
+
         // Guardar entidad
         Solicitud solicitud = new Solicitud();
+        solicitud.setCliente(cliente);
         Solicitud solicitudGuardada = solicitudRepository.save(solicitud);
         
         // Verificar integridad de que se guardó y tiene ID asignado
@@ -50,8 +61,13 @@ class SolicitudRepositoryTest {
      */
     @Test
     void testGuardarYRecuperarHistoricoEstados() {
+        // Crear cliente
+        Cliente cliente = new Cliente("Test User 2", "test2@example.com", TipoCliente.STANDARD);
+        cliente = clienteRepository.save(cliente);
+
         // Guardar entidad
         Solicitud solicitud = new Solicitud(); // Crea histórico con estado ABIERTA
+        solicitud.setCliente(cliente);
         solicitud.procesarSolicitud();         // Añade estado EN_PROCESO
         solicitud.cerrarSolicitud();           // Añade estado CERRADA
         
