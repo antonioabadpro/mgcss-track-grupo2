@@ -22,13 +22,10 @@ jobs:
       run: docker build . --file Dockerfile --tag mgcss-track-grupo2:latest
 
     - name: Publish Release
-      # Reemplaza @v1 por el SHA completo de la versión v1 (o v1.0.0, etc.)
-      uses: softprops/action-gh-release@de2c5f817835fada04e030b47702ee54e3229da4 # v1
+      uses: softprops/action-gh-release@273398327cb02c37346b0a8870191834925055b8
       with:
         files: target/*.jar
         # github.ref_name extrae solo el nombre (ej. v1.0.0) en vez de refs/tags/v1.0.0
         tag_name: ${{ github.ref_name }}
         name: Release ${{ github.ref_name }}
         body: ${{ github.event.head_commit.message }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
