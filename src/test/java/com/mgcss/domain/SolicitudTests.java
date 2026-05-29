@@ -177,4 +177,28 @@ class SolicitudTests {
 		
 		assertEquals(desc, solicitud.getDescripcion(), "La descripción debería coincidir.");
 	}
+
+	/**
+	 * Este test verifica que el cálculo del tiempo máximo de resolución cambie en base al Tipo de Cliente.
+	 */
+	@Test
+	void testTiempoMaximoBasadoEnPrioridadCliente() {
+		Solicitud solicitud = new Solicitud();
+		Cliente clientePremium = new Cliente();
+		clientePremium.setTipoCliente(TipoCliente.PREMIUM);
+		
+		Cliente clienteStandard = new Cliente();
+		clienteStandard.setTipoCliente(TipoCliente.STANDARD);
+
+		// Caso sin cliente (defecto)
+		assertEquals(5, solicitud.getTiempoMaximo(), "El tiempo máximo por defecto sin cliente debería ser 5 días.");
+
+		// Caso PREMIUM
+		solicitud.setCliente(clientePremium);
+		assertEquals(1, solicitud.getTiempoMaximo(), "El tiempo máximo de un cliente PREMIUM debería ser 1 día.");
+
+		// Caso STANDARD
+		solicitud.setCliente(clienteStandard);
+		assertEquals(5, solicitud.getTiempoMaximo(), "El tiempo máximo de un cliente STANDARD debería ser 5 días.");
+	}
 }

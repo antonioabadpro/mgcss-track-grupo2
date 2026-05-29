@@ -21,13 +21,14 @@ class SolicitudResponseDTOTest {
         assertNull(dto.getTecnicoId());
         assertNull(dto.getClienteId());
         assertNull(dto.getFechaCierre());
+        assertNull(dto.getTiempoMaximo());
         assertNull(dto.getHistoricoEstados());
     }
 
     @Test
     void testAllArgsConstructorAndGetters() {
         List<EstadoHistoricoDTO> historico = Collections.singletonList(new EstadoHistoricoDTO());
-        SolicitudResponseDTO dto = new SolicitudResponseDTO(1L, EstadoSolicitud.ABIERTA, "12/12/2023", "Problema con el proyector en el aula PQ 1.2", 2L, 3L, "15/12/2023", historico);
+        SolicitudResponseDTO dto = new SolicitudResponseDTO(1L, EstadoSolicitud.ABIERTA, "12/12/2023", "Problema con el proyector en el aula PQ 1.2", 2L, 3L, "15/12/2023", 5, historico);
         
         assertEquals(1L, dto.getId());
         assertEquals(EstadoSolicitud.ABIERTA, dto.getEstado());
@@ -36,6 +37,7 @@ class SolicitudResponseDTOTest {
         assertEquals(2L, dto.getTecnicoId());
         assertEquals(3L, dto.getClienteId());
         assertEquals("15/12/2023", dto.getFechaCierre());
+        assertEquals(5, dto.getTiempoMaximo());
         assertEquals(historico, dto.getHistoricoEstados());
     }
 
@@ -51,6 +53,7 @@ class SolicitudResponseDTOTest {
         dto.setTecnicoId(2L);
         dto.setClienteId(3L);
         dto.setFechaCierre("15/12/2023");
+        dto.setTiempoMaximo(5);
         dto.setHistoricoEstados(historico);
         
         assertEquals(1L, dto.getId());
@@ -60,6 +63,7 @@ class SolicitudResponseDTOTest {
         assertEquals(2L, dto.getTecnicoId());
         assertEquals(3L, dto.getClienteId());
         assertEquals("15/12/2023", dto.getFechaCierre());
+        assertEquals(5, dto.getTiempoMaximo());
         assertEquals(historico, dto.getHistoricoEstados());
     }
 
@@ -74,6 +78,7 @@ class SolicitudResponseDTOTest {
                 .tecnicoId(2L)
                 .clienteId(3L)
                 .fechaCierre("15/12/2023")
+                .tiempoMaximo(5)
                 .historicoEstados(historico)
                 .build();
                 
@@ -84,13 +89,14 @@ class SolicitudResponseDTOTest {
         assertEquals(2L, dto.getTecnicoId());
         assertEquals(3L, dto.getClienteId());
         assertEquals("15/12/2023", dto.getFechaCierre());
+        assertEquals(5, dto.getTiempoMaximo());
         assertEquals(historico, dto.getHistoricoEstados());
     }
 
     @Test
     void testEqualsAndHashCode() {
-        SolicitudResponseDTO dto1 = new SolicitudResponseDTO(1L, EstadoSolicitud.ABIERTA, "12/12/2023", null, 2L, 3L, null, null);
-        SolicitudResponseDTO dto2 = new SolicitudResponseDTO(1L, EstadoSolicitud.ABIERTA, "12/12/2023", null, 2L, 3L, null, null);
+        SolicitudResponseDTO dto1 = new SolicitudResponseDTO(1L, EstadoSolicitud.ABIERTA, "12/12/2023", null, 2L, 3L, null, 5, null);
+        SolicitudResponseDTO dto2 = new SolicitudResponseDTO(1L, EstadoSolicitud.ABIERTA, "12/12/2023", null, 2L, 3L, null, 5, null);
         
         assertEquals(dto1, dto2);
         assertEquals(dto1.hashCode(), dto2.hashCode());
@@ -98,8 +104,8 @@ class SolicitudResponseDTOTest {
 
     @Test
     void testToString() {
-        SolicitudResponseDTO dto = new SolicitudResponseDTO(1L, EstadoSolicitud.ABIERTA, "12/12/2023", null, 2L, 3L, null, null);
-        String expected = "SolicitudResponseDTO(id=1, estado=ABIERTA, fechaCreacion=12/12/2023, descripcion=null, tecnicoId=2, clienteId=3, fechaCierre=null, historicoEstados=null)";
+        SolicitudResponseDTO dto = new SolicitudResponseDTO(1L, EstadoSolicitud.ABIERTA, "12/12/2023", null, 2L, 3L, null, 5, null);
+        String expected = "SolicitudResponseDTO(id=1, estado=ABIERTA, fechaCreacion=12/12/2023, descripcion=null, tecnicoId=2, clienteId=3, fechaCierre=null, tiempoMaximo=5, historicoEstados=null)";
         assertEquals(expected, dto.toString());
     }
 }

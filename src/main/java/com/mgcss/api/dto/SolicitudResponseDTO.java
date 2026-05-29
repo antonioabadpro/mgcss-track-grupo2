@@ -33,6 +33,8 @@ public class SolicitudResponseDTO {
     private Long clienteId;
     @Schema(description = "Fecha en la que la solicitud fue cerrada", example = "12/05/2026 10:00:00")
     private String fechaCierre;
+    @Schema(description = "SLA (Service Level Agreement) en días para resolver la solicitud", example = "1")
+    private Integer tiempoMaximo;
     @Schema(description = "Lista que contiene el histórico de estados que ha tenido la solicitud")
     private List<EstadoHistoricoDTO> historicoEstados;
 }

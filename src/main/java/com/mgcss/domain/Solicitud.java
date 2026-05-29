@@ -294,6 +294,14 @@ public class Solicitud {
         this.cliente = cliente;
     }
 
+    /**
+     * Calcula el tiempo máximo de resolución en días basado en la prioridad del cliente.
+     * @return 1 si el cliente es PREMIUM, 5 si es STANDARD.
+     */
+    public int getTiempoMaximo() {
+        return (this.cliente != null && this.cliente.getTipoCliente() == TipoCliente.PREMIUM) ? 1 : 5;
+    }
+
     public String getFechaCierre() {
         return fechaCierre;
     }
