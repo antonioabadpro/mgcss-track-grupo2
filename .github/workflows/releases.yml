@@ -19,7 +19,7 @@ jobs:
       run: mvn clean package -DskipTests
 
     - name: Build Docker image
-      run: docker build . --file Dockerfile --tag mgcss-track-grupo2:latest
+      run: docker build . --file Dockerfile --tag mininh/mgcss-track:${{ github.ref_name }}
 
     - name: Publish Release
       uses: softprops/action-gh-release@v3
