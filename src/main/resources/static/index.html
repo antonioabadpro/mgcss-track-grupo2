@@ -13,6 +13,7 @@
     <div class="nav-links">
         <button id="navSolicitudes" class="nav-btn active" onclick="switchView('solicitudes')">📋 Gestión de Solicitudes</button>
         <button id="navTecnicos" class="nav-btn" onclick="switchView('tecnicos')">👨‍🔧 Gestión de Técnicos</button>
+        <button id="navClientes" class="nav-btn" onclick="switchView('clientes')">👥 Gestión de Clientes</button>
     </div>
 </nav>
 
@@ -36,6 +37,15 @@
             <label style="font-weight: bold; font-size: 14px;">Descripción del problema:</label>
             <textarea id="inputDescripcion" placeholder="Describe el problema en detalle (ej. El proyector del aula PQ 1.2 no funciona)..." class="input-textarea"></textarea>
             
+            <div style="margin-top: 10px; margin-bottom: 10px;">
+                <label for="selectClienteCreacion" style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Cliente Reportador:</label>
+                <select id="selectClienteCreacion" class="input-form" style="width: 100%;">
+                </select>
+                <p id="msgAvisoClientes" class="error hidden" style="margin-top: 5px; font-size: 12px; font-weight: bold;">
+                    ⚠️ No hay clientes registrados. Debes crear un cliente primero.
+                </p>
+            </div>
+            
             <div style="margin-top: 10px; margin-bottom: 15px;">
                 <label for="selectTecnicoCreacion" style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Asignar Técnico Responsable:</label>
                 <select id="selectTecnicoCreacion" class="input-form" style="width: 100%;">
@@ -58,6 +68,7 @@
                         <th>ID</th>
                         <th>Estado</th>
                         <th>Fecha Creación</th>
+                        <th>Cliente</th>
                         <th>Técnico</th>
                         <th style="text-align: right;">Acciones de Gestión</th>
                     </tr>
@@ -97,6 +108,43 @@
                     </tr>
                 </thead>
                 <tbody id="tablaTecnicos"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="viewClientes" class="hidden">
+        <div class="actions-bar">
+            <button class="btn-primary" style="background-color: #3b82f6;" onclick="togglePanelCreacionCli()"><span>+</span> Nuevo Cliente</button>
+            <button class="btn-action" onclick="cargarDatos()">🔄 Actualizar Lista</button>
+        </div>
+
+        <div id="panelCreacionCli" class="panel-creacion hidden">
+            <h3 style="color: #3b82f6;">👥 Alta de Nuevo Cliente</h3>
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <input type="text" id="inputNombreCliente" placeholder="Nombre completo" class="input-form" style="flex: 1;">
+                <input type="email" id="inputEmailCliente" placeholder="Correo electrónico" class="input-form" style="flex: 1;">
+                <select id="selectTipoCliente" class="input-form" style="width: 150px;">
+                    <option value="STANDARD">Standard</option>
+                    <option value="PREMIUM">Premium</option>
+                </select>
+            </div>
+            <div class="panel-actions">
+                <button class="btn-action" onclick="togglePanelCreacionCli()">Cancelar</button>
+                <button class="btn-primary" style="background-color: #3b82f6;" onclick="crearCliente()">Registrar Cliente</button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Tipo</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaClientes"></tbody>
             </table>
         </div>
     </div>

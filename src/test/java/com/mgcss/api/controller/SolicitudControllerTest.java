@@ -2,7 +2,9 @@ package com.mgcss.api.controller;
 import com.mgcss.domain.EstadoSolicitud;
 import com.mgcss.domain.Solicitud;
 import com.mgcss.domain.Tecnico;
+import com.mgcss.domain.Cliente;
 import com.mgcss.infraestructure.repository.TecnicoRepository;
+import com.mgcss.infraestructura.repository.ClienteRepository;
 import com.mgcss.service.SolicitudService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -36,8 +38,12 @@ class SolicitudControllerTest {
     @MockitoBean
     private TecnicoRepository tecnicoRepository;
 
+    @MockitoBean
+    private ClienteRepository clienteRepository;
+
     private Solicitud solicitudDummy;
     private Tecnico tecnicoDummy;
+    private Cliente clienteDummy;
 
     @BeforeEach
     void setUp() {
@@ -47,6 +53,11 @@ class SolicitudControllerTest {
 
         tecnicoDummy = new Tecnico();
         tecnicoDummy.setId(10L);
+
+        clienteDummy = new Cliente();
+        clienteDummy.setId(5L);
+        
+        solicitudDummy.setCliente(clienteDummy);
     }
 
     /**
@@ -55,10 +66,13 @@ class SolicitudControllerTest {
      */
     @Test
     void testCrearSolicitud() throws Exception {
+        when(clienteRepository.findById(5L)).thenReturn(Optional.of(clienteDummy));
         when(solicitudService.crearSolicitud(any(Solicitud.class))).thenReturn(solicitudDummy);
 
         // Cumple: Verificar código HTTP (201) y estructura JSON
-        mockMvc.perform(post("/api/solicitudes"))
+        mockMvc.perform(post("/api/solicitudes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"clienteId\": 5}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.estado").value("ABIERTA"));
@@ -209,6 +223,7 @@ class SolicitudControllerTest {
      */
     @Test
     void testCrearSolicitud_ConDescripcion() throws Exception {
+        when(clienteRepository.findById(5L)).thenReturn(Optional.of(clienteDummy));
         when(solicitudService.crearSolicitud(any(Solicitud.class))).thenAnswer(invocation -> {
             Solicitud input = invocation.getArgument(0);
             input.setId(1L);
@@ -217,7 +232,7 @@ class SolicitudControllerTest {
 
         mockMvc.perform(post("/api/solicitudes")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"descripcion\": \"Ordenador no enciende\"}"))
+                .content("{\"descripcion\": \"Ordenador no enciende\", \"clienteId\": 5}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.descripcion").value("Ordenador no enciende"));
@@ -230,6 +245,7 @@ class SolicitudControllerTest {
     void testCrearSolicitud_ConTecnicoValido() throws Exception {
         tecnicoDummy.setTecnicoActivo();
         when(tecnicoRepository.findById(10L)).thenReturn(Optional.of(tecnicoDummy));
+        when(clienteRepository.findById(5L)).thenReturn(Optional.of(clienteDummy));
         when(solicitudService.crearSolicitud(any(Solicitud.class))).thenAnswer(invocation -> {
             Solicitud input = invocation.getArgument(0);
             input.setId(1L);
@@ -238,7 +254,7 @@ class SolicitudControllerTest {
 
         mockMvc.perform(post("/api/solicitudes")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"tecnicoId\": 10}"))
+                .content("{\"tecnicoId\": 10, \"clienteId\": 5}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.tecnicoId").value(10L))
@@ -251,10 +267,11 @@ class SolicitudControllerTest {
     @Test
     void testCrearSolicitud_ConTecnicoInexistente() throws Exception {
         when(tecnicoRepository.findById(99L)).thenReturn(Optional.empty());
+        when(clienteRepository.findById(5L)).thenReturn(Optional.of(clienteDummy));
 
         mockMvc.perform(post("/api/solicitudes")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"tecnicoId\": 99}"))
+                .content("{\"tecnicoId\": 99, \"clienteId\": 5}"))
                 .andExpect(status().isBadRequest());
     }
 }
