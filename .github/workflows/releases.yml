@@ -19,7 +19,7 @@ jobs:
       run: mvn clean package -DskipTests
 
     - name: Build Docker image
-      run: docker build . --file Dockerfile --tag mininh/mgcss-track:${{ github.ref_name }}
+      run: docker build . --file Dockerfile --tag mininh/mgcss-track-grupo2:${{ github.ref_name }}
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
@@ -28,7 +28,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Push Docker image
-      run: docker push mininh/mgcss-track:${{ github.ref_name }}
+      run: docker push mininh/mgcss-track-grupo2:${{ github.ref_name }}
 
     - name: Publish Release
       uses: softprops/action-gh-release@v3
