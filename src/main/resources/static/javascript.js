@@ -1,8 +1,10 @@
 const API_SOL = 'http://localhost:8080/api/solicitudes';
 const API_TEC = 'http://localhost:8080/api/tecnicos';
+const API_CLI = 'http://localhost:8080/api/clientes';
 
 let cacheSolicitudes = [];
 let cacheTecnicos = [];
+let cacheClientes = [];
 let modoPanelSol = 'CREAR'; // 'CREAR' o 'PROCESAR'
 let idSolActiva = null;
 
@@ -19,25 +21,36 @@ function avisar(mensaje, tipo) {
 function switchView(vista) {
     document.getElementById('navSolicitudes').classList.remove('active');
     document.getElementById('navTecnicos').classList.remove('active');
+    document.getElementById('navClientes').classList.remove('active');
     
     document.getElementById('viewSolicitudes').classList.add('hidden');
     document.getElementById('viewTecnicos').classList.add('hidden');
+    document.getElementById('viewClientes').classList.add('hidden');
 
     cerrarPanelSol();
     document.getElementById('panelCreacionTec').classList.add('hidden');
     document.getElementById('inputNombreTecnico').value = '';
     document.getElementById('inputEdadTecnico').value = '';
+    
+    document.getElementById('panelCreacionCli').classList.add('hidden');
+    document.getElementById('inputNombreCliente').value = '';
+    document.getElementById('inputEmailCliente').value = '';
 
     if (vista === 'solicitudes') {
         document.getElementById('navSolicitudes').classList.add('active');
         document.getElementById('viewSolicitudes').classList.remove('hidden');
         document.getElementById('headerTitulo').innerText = "MGCSS - Gestión de Servicio Técnico";
         document.getElementById('headerSubtitulo').innerText = "Control de solicitudes de un Servicio Técnico en tiempo real";
-    } else {
+    } else if (vista === 'tecnicos') {
         document.getElementById('navTecnicos').classList.add('active');
         document.getElementById('viewTecnicos').classList.remove('hidden');
         document.getElementById('headerTitulo').innerText = "MGCSS - Plantilla de Técnicos";
         document.getElementById('headerSubtitulo').innerText = "Gestión del personal y altas en el sistema";
+    } else if (vista === 'clientes') {
+        document.getElementById('navClientes').classList.add('active');
+        document.getElementById('viewClientes').classList.remove('hidden');
+        document.getElementById('headerTitulo').innerText = "MGCSS - Base de Datos de Clientes";
+        document.getElementById('headerSubtitulo').innerText = "Gestión de los clientes que pueden reportar averías";
     }
     
     cargarDatos(); 
@@ -45,12 +58,14 @@ function switchView(vista) {
 
 async function cargarDatos() {
     try {
-        const [resSol, resTec] = await Promise.all([fetch(API_SOL), fetch(API_TEC)]);
+        const [resSol, resTec, resCli] = await Promise.all([fetch(API_SOL), fetch(API_TEC), fetch(API_CLI)]);
         if (resSol.ok) cacheSolicitudes = await resSol.json();
         if (resTec.ok) cacheTecnicos = await resTec.json();
+        if (resCli.ok) cacheClientes = await resCli.json();
         
         renderizarSolicitudes();
         renderizarTecnicos();
+        renderizarClientes();
     } catch (err) { 
         avisar("Error de conexión con el servidor.", "error"); 
     }
@@ -91,6 +106,27 @@ function cargarSelectTecnicos(permitirVacio) {
     }
 }
 
+function cargarSelectClientes() {
+    const select = document.getElementById('selectClienteCreacion');
+    const msgAviso = document.getElementById('msgAvisoClientes');
+    const btnGuardar = document.getElementById('btnGuardarSolicitud');
+    
+    select.innerHTML = '';
+    
+    if (cacheClientes.length === 0) {
+        select.classList.add('hidden');
+        msgAviso.classList.remove('hidden');
+        btnGuardar.disabled = true;
+    } else {
+        select.classList.remove('hidden');
+        msgAviso.classList.add('hidden');
+        btnGuardar.disabled = false;
+        cacheClientes.forEach(c => {
+            select.innerHTML += `<option value="${c.id}">${c.nombre} (${c.email})</option>`;
+        });
+    }
+}
+
 function abrirPanelCrear() {
     modoPanelSol = 'CREAR';
     idSolActiva = null;
@@ -102,13 +138,17 @@ function abrirPanelCrear() {
     inputDesc.value = '';
     inputDesc.readOnly = false;
     
+    const selectCli = document.getElementById('selectClienteCreacion');
+    selectCli.disabled = false;
+
     cargarSelectTecnicos(true); // Permitimos que la avería nazca sin técnico asignado
+    cargarSelectClientes();     // Rellenamos la lista de clientes
     
     document.getElementById('panelCreacionSol').classList.remove('hidden');
     inputDesc.focus();
 }
 
-function abrirPanelProcesar(id, descString) {
+function abrirPanelProcesar(id, descString, clienteId) {
     modoPanelSol = 'PROCESAR';
     idSolActiva = id;
     
@@ -119,6 +159,11 @@ function abrirPanelProcesar(id, descString) {
     inputDesc.value = descString || '';
     inputDesc.readOnly = true; // Bloqueamos la modificación de la descripción
     
+    const selectCli = document.getElementById('selectClienteCreacion');
+    const cliNombre = cacheClientes.find(c => c.id === clienteId)?.nombre || 'Desconocido';
+    selectCli.innerHTML = `<option value="${clienteId}">${cliNombre}</option>`;
+    selectCli.disabled = true;
+
     cargarSelectTecnicos(false); // NO permitimos vacío, hay que asignar a alguien
     
     document.getElementById('panelCreacionSol').classList.remove('hidden');
@@ -143,6 +188,7 @@ function renderizarSolicitudes() {
 
     cacheSolicitudes.forEach(s => {
         const nombreTec = cacheTecnicos.find(t => t.id === s.tecnicoId)?.nombre || 'Sin asignar';
+        const nombreCli = cacheClientes.find(c => c.id === s.clienteId)?.nombre || 'Desconocido';
         
         // Evitamos que saltos de línea o comillas rompan el HTML del botón procesar
         const descSafe = s.descripcion ? s.descripcion.replace(/'/g, "\\'").replace(/"/g, "&quot;") : '';
@@ -152,10 +198,11 @@ function renderizarSolicitudes() {
             <td>#${s.id}</td>
             <td><span class="badge badge-${s.estado.toLowerCase().replace('_','')}">${s.estado}</span></td>
             <td>${s.fechaCreacion || '-'}</td>
-            <td>${s.tecnicoId ? '👤 ' + nombreTec : '❌ Sin asignar'}</td>
+            <td>👤 ${nombreCli}</td>
+            <td>${s.tecnicoId ? '👨‍🔧 ' + nombreTec : '❌ Sin asignar'}</td>
             <td class="td-acciones">
                 <div class="grupo-acciones">
-                    <button class="btn-action" onclick="abrirPanelProcesar(${s.id}, '${descSafe}')">Procesar</button>
+                    <button class="btn-action" onclick="abrirPanelProcesar(${s.id}, '${descSafe}', ${s.clienteId})">Procesar</button>
                     <button class="btn-action" onclick="actualizarEstado(${s.id}, 'CERRADA')">Cerrar</button>
                     <button class="btn-action" onclick="reabrir(${s.id})">Reabrir</button>
                 </div>
@@ -177,8 +224,14 @@ function renderizarSolicitudes() {
 async function crearSolicitud() {
     const desc = document.getElementById('inputDescripcion').value.trim();
     const tecnicoId = document.getElementById('selectTecnicoCreacion').value;
+    const clienteId = document.getElementById('selectClienteCreacion').value;
 
-    const bodyReq = {};
+    if (!clienteId) {
+        avisar("Debes seleccionar un cliente reportador.", "error");
+        return;
+    }
+
+    const bodyReq = { clienteId: parseInt(clienteId) };
     if (desc) bodyReq.descripcion = desc;
     if (tecnicoId) bodyReq.tecnicoId = parseInt(tecnicoId);
 
@@ -298,6 +351,63 @@ async function toggleEstadoTecnico(id) {
             cargarDatos(); 
         } else {
             avisar("Error al cambiar estado del técnico.", "error");
+        }
+    } catch (err) { avisar("Error de red", "error"); }
+}
+
+// ==========================================
+// VISTA: CLIENTES
+// ==========================================
+function togglePanelCreacionCli() {
+    const panel = document.getElementById('panelCreacionCli');
+    panel.classList.toggle('hidden');
+    if (!panel.classList.contains('hidden')) {
+        document.getElementById('inputNombreCliente').focus();
+    }
+}
+
+function renderizarClientes() {
+    const tbody = document.getElementById('tablaClientes');
+    tbody.innerHTML = '';
+
+    cacheClientes.forEach(c => {
+        const badgeClass = c.tipoCliente === 'PREMIUM' ? 'badge-abierta' : 'badge-cerrada';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>#${c.id}</td>
+            <td><strong>${c.nombre}</strong></td>
+            <td>${c.email}</td>
+            <td><span class="badge ${badgeClass}">${c.tipoCliente}</span></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+async function crearCliente() {
+    const nom = document.getElementById('inputNombreCliente').value.trim();
+    const email = document.getElementById('inputEmailCliente').value.trim();
+    const tipo = document.getElementById('selectTipoCliente').value;
+    
+    if(!nom || !email) { 
+        avisar("Por favor, rellena nombre y correo electrónico.", "error"); 
+        return; 
+    }
+
+    try {
+        const res = await fetch(API_CLI, {
+            method: 'POST', 
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ nombre: nom, email: email, tipoCliente: tipo })
+        });
+        
+        if (res.ok) { 
+            avisar("Cliente registrado correctamente", "exito"); 
+            document.getElementById('inputNombreCliente').value = ''; 
+            document.getElementById('inputEmailCliente').value = '';
+            togglePanelCreacionCli(); 
+            cargarDatos(); 
+        } else { 
+            avisar("Error al crear el cliente.", "error"); 
         }
     } catch (err) { avisar("Error de red", "error"); }
 }

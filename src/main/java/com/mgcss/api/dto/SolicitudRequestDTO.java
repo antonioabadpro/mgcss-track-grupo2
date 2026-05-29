@@ -21,6 +21,8 @@ public class SolicitudRequestDTO {
     private String descripcion;
     @Schema(description = "ID del técnico asignado a la solicitud", example = "10")
     private Long tecnicoId;
+    @Schema(description = "ID del cliente de la solicitud", example = "5")
+    private Long clienteId;
     @Schema(description = "Estado de la solicitud que enviamos en la petición", example = "EN_PROCESO")
     private EstadoSolicitud estado;
 }

@@ -29,6 +29,10 @@ public class SolicitudResponseDTO {
     private String descripcion;
     @Schema(description = "ID del técnico asignado a la solicitud", example = "10")
     private Long tecnicoId;
+    @Schema(description = "ID del cliente de la solicitud", example = "5")
+    private Long clienteId;
+    @Schema(description = "Fecha en la que la solicitud fue cerrada", example = "12/05/2026 10:00:00")
+    private String fechaCierre;
     @Schema(description = "Lista que contiene el histórico de estados que ha tenido la solicitud")
     private List<EstadoHistoricoDTO> historicoEstados;
 }

@@ -5,8 +5,10 @@ import com.mgcss.api.dto.SolicitudRequestDTO;
 import com.mgcss.api.dto.SolicitudResponseDTO;
 import com.mgcss.domain.EstadoSolicitud;
 import com.mgcss.domain.Solicitud;
+import com.mgcss.domain.Cliente;
 import com.mgcss.domain.Tecnico;
 import com.mgcss.infraestructure.repository.TecnicoRepository;
+import com.mgcss.infraestructura.repository.ClienteRepository;
 import com.mgcss.service.SolicitudService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +33,7 @@ public class SolicitudController {
 
     private final SolicitudService solicitudService;
     private final TecnicoRepository tecnicoRepository;
+    private final ClienteRepository clienteRepository;
 
     /**
      * Mapper manual para evitar dependencias innecesarias y cumplir el patrón DTO.
@@ -49,13 +52,16 @@ public class SolicitudController {
                 .fechaCreacion(solicitud.getFechaCreacion())
                 .descripcion(solicitud.getDescripcion())
                 .tecnicoId(solicitud.getTecnico() != null ? solicitud.getTecnico().getId() : null)
+                .clienteId(solicitud.getCliente() != null ? solicitud.getCliente().getId() : null)
+                .fechaCierre(solicitud.getFechaCierre())
                 .historicoEstados(historicoDTOs)
                 .build();
     }
 
-    public SolicitudController(SolicitudService solicitudService, TecnicoRepository tecnicoRepository) {
+    public SolicitudController(SolicitudService solicitudService, TecnicoRepository tecnicoRepository, ClienteRepository clienteRepository) {
         this.solicitudService = solicitudService;
         this.tecnicoRepository = tecnicoRepository;
+        this.clienteRepository = clienteRepository;
     }
 
     /**
@@ -72,6 +78,14 @@ public class SolicitudController {
             // Si en el DTO viene la descripcion, se la asignamos a la solicitud
             if (requestDTO.getDescripcion() != null) {
                 solicitud.setDescripcion(requestDTO.getDescripcion());
+            }
+
+            if (requestDTO.getClienteId() != null) {
+                Cliente cliente = clienteRepository.findById(requestDTO.getClienteId())
+                        .orElseThrow(() -> new IllegalArgumentException("El cliente no existe"));
+                solicitud.setCliente(cliente);
+            } else {
+                throw new IllegalArgumentException("El ID del cliente es obligatorio para crear una solicitud");
             }
             
             // Si el el DTO viene el id del Tecnico, se lo asignamos a la solicitud y cambiamos el estado a EN_PROCESO
