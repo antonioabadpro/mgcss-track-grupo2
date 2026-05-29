@@ -38,6 +38,13 @@
 			<scope>runtime</scope>
 		</dependency>
 		
+		<!-- Base de datos PostgreSQL (runtime para producción) -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		
 		<!-- Actuator: métricas y salud de la aplicación -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

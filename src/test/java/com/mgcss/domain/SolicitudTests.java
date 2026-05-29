@@ -128,7 +128,7 @@ class SolicitudTests {
 		
 		boolean esReabierta = solicitud.reabrir();
 		
-		assertEquals(EstadoSolicitud.EN_PROCESO, solicitud.getEstado(), "La solicitud debería actualizarse al estado 'En Proceso' después de reabrirla.");
+		assertEquals(EstadoSolicitud.ABIERTA, solicitud.getEstado(), "La solicitud debería actualizarse al estado 'En Proceso' después de reabrirla.");
 		assertEquals(true, esReabierta, "La Solicitud debería ser reabierta.");
 	}
 
@@ -141,7 +141,7 @@ class SolicitudTests {
 		
 		solicitud.procesarSolicitud(); // EN_PROCESO
 		solicitud.cerrarSolicitud();   // CERRADA
-		solicitud.reabrir();           // EN_PROCESO
+		solicitud.reabrir();           // ABIERTA
 		
 		java.util.List<EstadoHistorico> historico = solicitud.getHistoricoEstados();
 		
@@ -149,6 +149,32 @@ class SolicitudTests {
 		assertEquals(EstadoSolicitud.ABIERTA, historico.get(0).getEstado());
 		assertEquals(EstadoSolicitud.EN_PROCESO, historico.get(1).getEstado());
 		assertEquals(EstadoSolicitud.CERRADA, historico.get(2).getEstado());
-		assertEquals(EstadoSolicitud.EN_PROCESO, historico.get(3).getEstado());
+		assertEquals(EstadoSolicitud.ABIERTA, historico.get(3).getEstado());
+	}
+
+	/**
+	 * Este test verifica que no se pueda reabrir una solicitud que no está en estado CERRADA.
+	 */
+	@Test
+	void testReabrirSolicitudNoCerrada() {
+		Solicitud solicitud = new Solicitud();
+		solicitud.setEstado(EstadoSolicitud.EN_PROCESO);
+		
+		boolean esReabierta = solicitud.reabrir();
+		
+		assertEquals(EstadoSolicitud.EN_PROCESO, solicitud.getEstado(), "El estado no debería cambiar.");
+		assertEquals(false, esReabierta, "reabrir() debería retornar false para solicitudes no cerradas.");
+	}
+
+	/**
+	 * Este test verifica que se pueda establecer y obtener la descripción de la solicitud.
+	 */
+	@Test
+	void testSetYGetDescripcion() {
+		Solicitud solicitud = new Solicitud();
+		String desc = "Pantalla rota de ordenador portátil.";
+		solicitud.setDescripcion(desc);
+		
+		assertEquals(desc, solicitud.getDescripcion(), "La descripción debería coincidir.");
 	}
 }
