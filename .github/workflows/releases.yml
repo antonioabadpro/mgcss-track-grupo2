@@ -28,6 +28,8 @@ jobs:
     - name: SonarCloud Quality Gate check
       id: sonarqube-quality-gate-check
       uses: sonarsource/sonarqube-quality-gate-action@master
+      with:
+        scanMetadataReportFile: target/sonar/report-task.txt
       # Fuerza que el workflow espere el resultado y falle si las métricas están en rojo
       timeout-minutes: 5
       env:
