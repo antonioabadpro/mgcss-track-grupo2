@@ -1,5 +1,8 @@
 # MGCSS-TRACK-GRUPO2
 
+[![CI Pipeline](https://github.com/antonioabadpro/mgcss-track-grupo2/actions/workflows/ci.yml/badge.svg)](https://github.com/antonioabadpro/mgcss-track-grupo2/actions/workflows/ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=antonioabadpro_mgcss-track-grupo2&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=antonioabadpro_mgcss-track-grupo2)
+
 Este repositorio contiene el proyecto de seguimiento de servicio técnico desarrollado para la asignatura MGCSS (Mantenimiento y Gestión del Cambio en Sistemas Software).
 
 ---
