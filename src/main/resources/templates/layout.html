@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MGCSS - Panel de Control</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+    <script>
+        function toggleDetalle(id) {
+            const el = document.getElementById('desc-' + id);
+            if(el.classList.contains('open')) { el.classList.remove('open'); }
+            else { el.classList.add('open'); }
+        }
+        function mostrarPanel(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function ocultarPanel(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+    </script>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">MGCSS SAT</div>
+    <div class="nav-links">
+        <a th:href="@{/solicitudes}" class="nav-btn" th:classappend="${view == 'solicitudes' ? 'active' : ''}">📋 Gestión de Solicitudes</a>
+        <a th:href="@{/tecnicos}" class="nav-btn" th:classappend="${view == 'tecnicos' ? 'active' : ''}">👨‍🔧 Gestión de Técnicos</a>
+        <a th:href="@{/clientes}" class="nav-btn" th:classappend="${view == 'clientes' ? 'active' : ''}">👥 Gestión de Clientes</a>
+        <a th:href="@{/dashboard}" class="nav-btn" th:classappend="${view == 'dashboard' ? 'active' : ''}">📊 Dashboard</a>
+        <form th:action="@{/logout}" method="post" style="display:inline;" sec:authorize="isAuthenticated()">
+            <button type="submit" class="nav-btn" style="color: #fca5a5;">Cerrar Sesión</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container">
+    <header>
+        <h1 th:text="${headerTitulo}">MGCSS</h1>
+        <p th:text="${headerSubtitulo}">Subtitulo</p>
+    </header>
+
+    <div th:if="${exito}" class="notificacion exito" th:text="${exito}"></div>
+    <div th:if="${error}" class="notificacion error" th:text="${error}"></div>
+
+    <!-- Contenido inyectado -->
+    <div th:replace="${content}"></div>
+</div>
+
+<footer class="footer-dark">
+    <div class="footer-bottom">
+        <p>&copy; 2026 MGCSS Track Grupo 2. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+</body>
+</html>
