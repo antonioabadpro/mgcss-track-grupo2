@@ -21,7 +21,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -200,6 +203,73 @@ public class WebControllerTest {
                         .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/solicitudes"))
+                .andExpect(flash().attributeExists("error"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testReabrirSolicitudException() throws Exception {
+        doThrow(new RuntimeException("Test Exception")).when(solicitudService).reabrirSolicitud(any());
+
+        mockMvc.perform(post("/solicitudes/1/reabrir")
+                        .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/solicitudes"))
+                .andExpect(flash().attributeExists("error"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testCerrarSolicitudTransicionNoPermitida() throws Exception {
+        Solicitud sol = mock(Solicitud.class);
+        when(solicitudService.consultarSolicitud(any())).thenReturn(sol);
+        when(sol.cerrarSolicitud()).thenReturn(false);
+
+        mockMvc.perform(post("/solicitudes/1/cerrar")
+                        .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/solicitudes"))
+                .andExpect(flash().attributeExists("error"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testCrearTecnicoException() throws Exception {
+        doThrow(new RuntimeException("Test Exception")).when(tecnicoService).crearTecnico(any());
+
+        mockMvc.perform(post("/tecnicos/crear")
+                        .param("nombre", "Error")
+                        .param("edad", "30")
+                        .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/tecnicos"))
+                .andExpect(flash().attributeExists("error"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testToggleEstadoTecnicoException() throws Exception {
+        when(tecnicoService.consultarTecnico(any())).thenThrow(new RuntimeException("Test Exception"));
+
+        mockMvc.perform(post("/tecnicos/1/toggle-estado")
+                        .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/tecnicos"))
+                .andExpect(flash().attributeExists("error"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testCrearClienteException() throws Exception {
+        doThrow(new RuntimeException("Test Exception")).when(clienteService).crearCliente(any());
+
+        mockMvc.perform(post("/clientes/crear")
+                        .param("nombre", "Error")
+                        .param("email", "error@test.com")
+                        .param("tipoCliente", "PREMIUM")
+                        .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/clientes"))
                 .andExpect(flash().attributeExists("error"));
     }
 }
