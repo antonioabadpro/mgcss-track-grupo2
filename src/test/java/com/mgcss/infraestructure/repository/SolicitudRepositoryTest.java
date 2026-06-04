@@ -19,8 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.springframework.test.context.ActiveProfiles;
+
 @Tag("integration")
 @DataJpaTest
+@ActiveProfiles("testcontainers")
 class SolicitudRepositoryTest {
 
     @Autowired

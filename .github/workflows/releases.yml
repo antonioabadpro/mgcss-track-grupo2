@@ -18,6 +18,28 @@ jobs:
     - name: Build with Maven
       run: mvn clean package -DskipTests
 
+    - name: Build and analyze with SonarCloud
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar "-Dsonar.projectKey=antonioabadpro_mgcss-track-grupo2" "-Dsonar.organization=antonioabadpro" "-Dsonar.host.url=https://sonarcloud.io"
+
+      # Comprobar el Quality Gate usando la API pública de forma anónima para evitar el error 403
+    - name: SonarCloud Quality Gate check (Manual)
+      run: |
+        echo "Esperando 20 segundos para que SonarCloud procese el análisis..."
+        sleep 20
+        STATUS=$(curl -s "https://sonarcloud.io/api/qualitygates/project_status?projectKey=antonioabadpro_mgcss-track-grupo2" | jq -r .projectStatus.status)
+        echo "Estado del Quality Gate: $STATUS"
+        if [ "$STATUS" = "ERROR" ]; then
+          echo "::error::El Quality Gate ha fallado. Hay métricas en rojo."
+          exit 1
+        elif [ "$STATUS" = "OK" ]; then
+          echo "El Quality Gate ha pasado con éxito."
+        else
+          echo "Estado desconocido o en proceso: $STATUS"
+        fi
+
     - name: Build Docker image
       run: docker build . --file Dockerfile --tag mininh/mgcss-track-grupo2:${{ github.ref_name }}
 
@@ -38,3 +60,15 @@ jobs:
         tag_name: ${{ github.ref_name }}
         name: Release ${{ github.ref_name }}
         body: ${{ github.event.head_commit.message }}
+
+    - name: Deploy to Render.com
+      if: success()
+      env:
+        RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+      run: |
+        if [ -n "$RENDER_DEPLOY_HOOK" ]; then
+          curl -X POST "$RENDER_DEPLOY_HOOK"
+          echo "Deployment hook triggered on Render.com"
+        else
+          echo "No RENDER_DEPLOY_HOOK secret found. Skipping deploy."
+        fi

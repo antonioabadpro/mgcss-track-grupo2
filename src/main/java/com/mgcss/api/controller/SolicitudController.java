@@ -54,6 +54,7 @@ public class SolicitudController {
                 .tecnicoId(solicitud.getTecnico() != null ? solicitud.getTecnico().getId() : null)
                 .clienteId(solicitud.getCliente() != null ? solicitud.getCliente().getId() : null)
                 .fechaCierre(solicitud.getFechaCierre())
+                .tiempoMaximo(solicitud.getTiempoMaximo())
                 .historicoEstados(historicoDTOs)
                 .build();
     }

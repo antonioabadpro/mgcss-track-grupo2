@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: html(view='tecnicos', headerTitulo='MGCSS - Plantilla de Técnicos', headerSubtitulo='Gestión del personal y altas en el sistema', content=~{::div})}">
+<body>
+<div>
+    <div class="actions-bar">
+        <button class="btn-primary" style="background-color: #10b981;" onclick="mostrarPanel('panelCreacionTec')"><span>+</span> Nuevo Técnico</button>
+        <a th:href="@{/tecnicos}" class="btn-action" style="text-decoration:none;">🔄 Actualizar Lista</a>
+    </div>
+
+    <div id="panelCreacionTec" class="panel-creacion hidden">
+        <h3 style="color: #10b981;">👨‍🔧 Alta de Nuevo Técnico</h3>
+        <form th:action="@{/tecnicos/crear}" method="post">
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <input type="text" name="nombre" placeholder="Nombre completo" class="input-form" required>
+                <input type="number" name="edad" placeholder="Edad" class="input-form" style="width: 100px;" required>
+            </div>
+            <div class="panel-actions">
+                <button type="button" class="btn-action" onclick="ocultarPanel('panelCreacionTec')">Cancelar</button>
+                <button type="submit" class="btn-primary" style="background-color: #10b981;">Registrar Técnico</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre del Técnico</th>
+                    <th>Edad</th>
+                    <th>Estado Actual</th>
+                    <th style="text-align: right;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="t : ${tecnicos}">
+                    <td th:text="'#' + ${t.id}"></td>
+                    <td><strong th:text="${t.nombre}"></strong></td>
+                    <td th:text="${t.edad} + ' años'"></td>
+                    <td>
+                        <span class="badge" th:classappend="${t.tecnicoActivo ? 'badge-abierta' : 'badge-cerrada'}" th:text="${t.tecnicoActivo ? 'ACTIVO' : 'INACTIVO'}"></span>
+                    </td>
+                    <td style="text-align: right;">
+                        <form th:action="@{/tecnicos/{id}/toggle-estado(id=${t.id})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn-action">🔄 Cambiar Estado</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${tecnicos.empty}">
+                    <td colspan="5" style="text-align: center; color: #64748b;">No hay técnicos registrados.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: html(view='solicitudes', headerTitulo='MGCSS - Gestión de Servicio Técnico', headerSubtitulo='Control de solicitudes de un Servicio Técnico en tiempo real', content=~{::div})}">
+<body>
+<div>
+    <div class="actions-bar">
+        <button class="btn-primary" onclick="mostrarPanel('panelCreacionSol')"><span>+</span> Nueva Solicitud</button>
+        <a th:href="@{/solicitudes}" class="btn-action" style="text-decoration:none;">🔄 Actualizar Lista</a>
+    </div>
+
+    <!-- Panel para crear -->
+    <div id="panelCreacionSol" class="panel-creacion hidden">
+        <h3 style="color: var(--primary);">📝 Registrar Nueva Avería</h3>
+        <form th:action="@{/solicitudes/crear}" method="post">
+            <label style="font-weight: bold; font-size: 14px;">Descripción del problema:</label>
+            <textarea name="descripcion" placeholder="Describe el problema en detalle..." class="input-textarea"></textarea>
+            
+            <div style="margin-top: 10px; margin-bottom: 10px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Cliente Reportador:</label>
+                <select name="clienteId" class="input-form" style="width: 100%;" required>
+                    <option value="" disabled selected>-- Selecciona un cliente --</option>
+                    <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nombre + ' (' + c.email + ')'}"></option>
+                </select>
+                <p th:if="${clientes.empty}" class="error" style="margin-top: 5px; font-size: 12px; font-weight: bold;">
+                    ⚠️ No hay clientes registrados. Debes crear un cliente primero.
+                </p>
+            </div>
+            
+            <div style="margin-top: 10px; margin-bottom: 15px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Asignar Técnico Responsable:</label>
+                <select name="tecnicoId" class="input-form" style="width: 100%;">
+                    <option value="">-- Sin asignar (Quedará ABIERTA) --</option>
+                    <option th:each="t : ${tecnicos}" th:if="${t.tecnicoActivo}" th:value="${t.id}" th:text="${t.nombre + ' (ID: ' + t.id + ')'}"></option>
+                </select>
+            </div>
+
+            <div class="panel-actions">
+                <button type="button" class="btn-action" onclick="ocultarPanel('panelCreacionSol')">Cancelar</button>
+                <button type="submit" class="btn-primary" th:disabled="${clientes.empty}">Guardar Solicitud</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Estado</th>
+                    <th>Fecha Creación</th>
+                    <th>Cliente</th>
+                    <th>Técnico</th>
+                    <th style="text-align: right;">Acciones de Gestión</th>
+                </tr>
+            </thead>
+            <tbody>
+                <th:block th:each="s : ${solicitudes}">
+                    <tr>
+                        <td th:text="'#' + ${s.id}"></td>
+                        <td>
+                            <span class="badge" th:classappend="${s.estado.name() == 'ABIERTA' ? 'badge-abierta' : (s.estado.name() == 'EN_PROCESO' ? 'badge-enproceso' : 'badge-cerrada')}" th:text="${s.estado}"></span>
+                        </td>
+                        <td th:text="${s.fechaCreacion}"></td>
+                        <td th:text="'👤 ' + (${s.cliente != null ? s.cliente.nombre : 'Desconocido'})"></td>
+                        <td th:text="${s.tecnico != null ? '👨‍🔧 ' + s.tecnico.nombre : '❌ Sin asignar'}"></td>
+                        <td class="td-acciones">
+                            <div class="grupo-acciones">
+                                <button th:if="${s.estado.name() == 'ABIERTA'}" class="btn-action" th:onclick="'mostrarPanel(\'panelProcesar-' + ${s.id} + '\')'">Procesar</button>
+                                
+                                <form th:if="${s.estado.name() == 'EN_PROCESO'}" th:action="@{/solicitudes/{id}/cerrar(id=${s.id})}" method="post">
+                                    <button type="submit" class="btn-action">Cerrar</button>
+                                </form>
+
+                                <form th:if="${s.estado.name() == 'CERRADA'}" th:action="@{/solicitudes/{id}/reabrir(id=${s.id})}" method="post">
+                                    <button type="submit" class="btn-action">Reabrir</button>
+                                </form>
+                            </div>
+                            <button class="btn-action btn-detalle" th:onclick="'toggleDetalle(' + ${s.id} + ')'">👁️ Ver Detalle</button>
+                        </td>
+                    </tr>
+                    
+                    <!-- Panel para procesar (oculto por defecto, dentro de la fila) -->
+                    <tr th:if="${s.estado.name() == 'ABIERTA'}" th:id="'panelProcesar-' + ${s.id}" class="hidden" style="background-color:#f1f5f9;">
+                        <td colspan="6">
+                            <form th:action="@{/solicitudes/{id}/procesar(id=${s.id})}" method="post" style="padding:10px;">
+                                <strong>Procesar Solicitud #<span th:text="${s.id}"></span></strong><br><br>
+                                <label>Selecciona un Técnico:</label>
+                                <select name="tecnicoId" class="input-form" required>
+                                    <option value="" disabled selected>-- Selecciona un técnico activo --</option>
+                                    <option th:each="t : ${tecnicos}" th:if="${t.tecnicoActivo}" th:value="${t.id}" th:text="${t.nombre}"></option>
+                                </select>
+                                <div style="margin-top:10px;">
+                                    <button type="button" class="btn-action" th:onclick="'ocultarPanel(\'panelProcesar-' + ${s.id} + '\')'">Cancelar</button>
+                                    <button type="submit" class="btn-primary">Asignar y Procesar</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+
+                    <tr th:id="'desc-' + ${s.id}" class="desc-row">
+                        <td colspan="6" class="desc-cell">
+                            <strong>📄 Descripción del problema:</strong><br><br>
+                            <span th:text="${s.descripcion != null ? s.descripcion : 'No se ha proporcionado descripción para esta avería.'}"></span>
+                        </td>
+                    </tr>
+                </th:block>
+                <tr th:if="${solicitudes.empty}">
+                    <td colspan="6" style="text-align: center; color: #64748b;">No hay solicitudes registradas.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
