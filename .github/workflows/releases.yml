@@ -60,3 +60,15 @@ jobs:
         tag_name: ${{ github.ref_name }}
         name: Release ${{ github.ref_name }}
         body: ${{ github.event.head_commit.message }}
+
+    - name: Deploy to Render.com
+      if: success()
+      env:
+        RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+      run: |
+        if [ -n "$RENDER_DEPLOY_HOOK" ]; then
+          curl -X POST "$RENDER_DEPLOY_HOOK"
+          echo "Deployment hook triggered on Render.com"
+        else
+          echo "No RENDER_DEPLOY_HOOK secret found. Skipping deploy."
+        fi

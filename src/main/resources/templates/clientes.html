@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: html(view='clientes', headerTitulo='MGCSS - Base de Datos de Clientes', headerSubtitulo='Gestión de los clientes que pueden reportar averías', content=~{::div})}">
+<body>
+<div>
+    <div class="actions-bar">
+        <button class="btn-primary" style="background-color: #3b82f6;" onclick="mostrarPanel('panelCreacionCli')"><span>+</span> Nuevo Cliente</button>
+        <a th:href="@{/clientes}" class="btn-action" style="text-decoration:none;">🔄 Actualizar Lista</a>
+    </div>
+
+    <div id="panelCreacionCli" class="panel-creacion hidden">
+        <h3 style="color: #3b82f6;">👥 Alta de Nuevo Cliente</h3>
+        <form th:action="@{/clientes/crear}" method="post">
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <input type="text" name="nombre" placeholder="Nombre completo" class="input-form" style="flex: 1;" required>
+                <input type="email" name="email" placeholder="Correo electrónico" class="input-form" style="flex: 1;" required>
+                <select name="tipoCliente" class="input-form" style="width: 150px;">
+                    <option value="STANDARD">Standard</option>
+                    <option value="PREMIUM">Premium</option>
+                </select>
+            </div>
+            <div class="panel-actions">
+                <button type="button" class="btn-action" onclick="ocultarPanel('panelCreacionCli')">Cancelar</button>
+                <button type="submit" class="btn-primary" style="background-color: #3b82f6;">Registrar Cliente</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="c : ${clientes}">
+                    <td th:text="'#' + ${c.id}"></td>
+                    <td><strong th:text="${c.nombre}"></strong></td>
+                    <td th:text="${c.email}"></td>
+                    <td>
+                        <span class="badge" th:classappend="${c.tipoCliente.name() == 'PREMIUM' ? 'badge-abierta' : 'badge-cerrada'}" th:text="${c.tipoCliente}"></span>
+                    </td>
+                </tr>
+                <tr th:if="${clientes.empty}">
+                    <td colspan="4" style="text-align: center; color: #64748b;">No hay clientes registrados.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
