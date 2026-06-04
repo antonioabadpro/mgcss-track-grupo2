@@ -20,7 +20,9 @@ El código está organizado en las siguientes capas principales dentro del paque
 * **Persistencia y Testing**: Se emplea Spring Data JPA con Hibernate.
   * *Desarrollo/Testing*: Uso de **Testcontainers** para levantar de forma dinámica contenedores de PostgreSQL efímeros durante las pruebas de integración, igualando el entorno de test con el de producción.
   * *Producción*: PostgreSQL gestionado vía `docker-compose`.
-* **Calidad y CI/CD**: Integración continua mediante GitHub Actions y SonarCloud. Automatización del Despliegue Continuo (CD) hacia Render.com mediante Webhooks desencadenados al publicar releases.
+* **Calidad y CI/CD**: Integración continua mediante GitHub Actions y SonarCloud. Automatización del Despliegue Continuo (CD) hacia Render.com (PaaS).
+  * *Contenedores*: Se utiliza un **Dockerfile Multi-Stage** que permite tanto compilar el código fuente (con Maven) como ejecutarlo en etapas separadas. Esto permite que plataformas como Render construyan la imagen directamente desde el repositorio o consuman la imagen de Docker Hub.
+  * *Entorno Cloud*: Para el despliegue gratuito en Render sin base de datos administrada, se inyecta la variable de entorno `SPRING_PROFILES_ACTIVE=dev` para usar persistencia H2, garantizando la operatividad de la demostración.
 * **Monitorización**: Integración de un servicio interno de SLA y Spring Boot Actuator para exponer un Dashboard de control en tiempo real (rutas `/dashboard` y `/actuator/health`).
 
 ---
