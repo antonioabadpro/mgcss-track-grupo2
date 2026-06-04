@@ -36,17 +36,28 @@ public class SecurityConfig {
         return http.build();
     }
 
+    @org.springframework.beans.factory.annotation.Value("${app.admin.password:admin123}")
+    private String adminPassword;
+
+    @org.springframework.beans.factory.annotation.Value("${app.user.password:user123}")
+    private String userPassword;
+
     @Bean
-    public UserDetailsService userDetailsService() {
+    public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
+        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         UserDetails admin = User.builder()
             .username("admin")
-            .password("{noop}admin123") // {noop} significa sin codificar
+            .password(passwordEncoder.encode(adminPassword))
             .roles("ADMIN")
             .build();
             
         UserDetails user = User.builder()
             .username("user")
-            .password("{noop}user123")
+            .password(passwordEncoder.encode(userPassword))
             .roles("USER")
             .build();
 

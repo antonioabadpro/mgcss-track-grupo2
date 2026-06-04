@@ -163,4 +163,43 @@ public class WebControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("login"));
     }
+
+    @Test
+    @WithMockUser
+    public void testCrearSolicitudException() throws Exception {
+        when(clienteService.consultarCliente(any())).thenThrow(new RuntimeException("Test Exception"));
+
+        mockMvc.perform(post("/solicitudes/crear")
+                        .param("descripcion", "Test")
+                        .param("clienteId", "99")
+                        .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/solicitudes"))
+                .andExpect(flash().attributeExists("error"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testProcesarSolicitudException() throws Exception {
+        when(tecnicoService.consultarTecnico(any())).thenThrow(new RuntimeException("Test Exception"));
+
+        mockMvc.perform(post("/solicitudes/1/procesar")
+                        .param("tecnicoId", "99")
+                        .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/solicitudes"))
+                .andExpect(flash().attributeExists("error"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testCerrarSolicitudException() throws Exception {
+        when(solicitudService.consultarSolicitud(any())).thenThrow(new RuntimeException("Test Exception"));
+
+        mockMvc.perform(post("/solicitudes/1/cerrar")
+                        .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/solicitudes"))
+                .andExpect(flash().attributeExists("error"));
+    }
 }
